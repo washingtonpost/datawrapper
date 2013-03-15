@@ -16,3 +16,6 @@ archive.tar
 *.log
 *.html
 *.png
+Vagrantfile
+.vagrant
+
