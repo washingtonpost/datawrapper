@@ -17,5 +17,5 @@ archive.tar
 *.html
 *.png
 Vagrantfile
-.vagrant
+.vagrant*
 
