@@ -82,13 +82,17 @@ $(function() {
         themesById = {};
 
     $.each(themes, function(i, theme) { themesById[theme.id] = theme; themesById[theme.id].__loaded = false });
-
+    // Override the default theme
+    if (chart.get('theme') === 'default') {
+        chart.set('theme', 'wapo')
+    }
     function loadThemeColors() {
         var picker = $('#select-color'),
             customColors = $('#palette-colors'),
             themeid = $('#select-theme').val(),
             theme = themesById[themeid],
             needed = [themeid];
+
         while (theme['extends']) {
             needed.unshift(theme['extends']);
             theme = themesById[theme['extends']];
@@ -218,9 +222,22 @@ $(function() {
         });
         _.each(themes, function(theme) {
             if (theme.id == chart.get('theme')) {
-                if (theme.default_width) $('#iframe-wrapper').width(theme.default_width);
-                else $('#iframe-wrapper').width('auto');
-                if (theme.default_height) $('#iframe-wrapper').height(theme.default_height);
+
+                if (theme.default_width){
+                    $('#iframe-wrapper').width(theme.default_width);
+                    $('#resize-w').attr('value', theme.default_width);
+                    chart.set('metadata.publish.embed-width', theme.default_width);
+
+                }
+                else {
+                    $('#iframe-wrapper').width('auto');
+                }
+                if (theme.default_height){
+                    $('#iframe-wrapper').height(theme.default_height);
+                    $('#resize-h').attr('value', theme.default_height)
+                    chart.set('metadata.publish.embed-height', theme.default_height);
+
+                }
                 return false;
             }
         });
@@ -413,7 +430,7 @@ $(function() {
                     <p>
                         <b>{% trans "Hint" %}:</b> {% trans "In case the visualization doesn't look like you expected, you should try to <a href='#' id='btn-transpose'><i class='icon-rotate'></i> transpose the data</a>." %}
                     </p>
-             </div>       
+             </div>
 
             <div class="section">
                 <h3>{% trans "Tell the story" %}</h3>

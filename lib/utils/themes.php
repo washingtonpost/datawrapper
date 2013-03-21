@@ -12,7 +12,11 @@ function get_themes_meta($ignoreRestrictions = false) {
         foreach ($files as $file) {
             $id = substr($file, strlen(ROOT_PATH) + 18, -10);
             $meta = get_theme_meta($id);
-            if (!$meta) continue;
+            if (isset($meta['hidden'])){
+                if ($meta['hidden'] == 1){
+                    continue;
+                }
+            };
             if (!isset($meta['restrict'])  // no restriction at all
                  || $meta['restrict'] == $domain  // check for email domain
                  || $meta['restrict'] == $email  // check for entire email address

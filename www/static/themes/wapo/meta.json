@@ -3,6 +3,8 @@
     "link": "http://www.washingtonpost.com",
     "restricted": null,
     "locale": "en_US",
-    "extends": "default",
+    "default_width": 606,
+    "default_height": 500,
     "version": "0.0.1"
+
 }

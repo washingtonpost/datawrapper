@@ -13,15 +13,40 @@ $(function() {
     chart.sync('#embed-width', 'metadata.publish.embed-width');
     chart.sync('#embed-height', 'metadata.publish.embed-height');
 
+    $('#chart-selector').change(function(hello) {
+        function set_height_width(chart, width, height){
+            $(chart).find('#embed-width').attr('value', width);
+            $(chart).find('#embed-height').attr('value', height);
+
+        };
+        chart_type = $('#chart-selector :selected').val()
+        if (chart_type === 'blog'){
+            set_height_width('#chart-embed', 606, 500);
+            changeIframe('#chart-embed');
+        } else if (chart_type === 'article'){
+            set_height_width('#chart-embed', 300, 500);
+            changeIframe('#chart-embed');
+
+        };
+
+    });
+
+
     $('#embed-width, #embed-height').change(function() {
-        var w = $('#embed-width').val(), h = $('#embed-height').val(),
-            embedCode = $('#iframe-code').html();
+        changeIframe('#chart-embed')
+    });
+
+    function changeIframe(form) {
+        var w = $(form).find('#embed-width').val(), h = $(form).find('#embed-height').val(),
+            embedCode = $(form).find('#iframe-code').html();
         embedCode = embedCode.replace(/width="\d+"/, 'width="' + w + '"');
         embedCode = embedCode.replace(/height="\d+"/, 'height="' + h + '"');
-        $('#iframe-code').html(embedCode);
+        $(form).find('#iframe-code').html(embedCode);
 
         resizeIFrame();
-    });
+
+
+    }
 
     function resizeIFrame() {
         var iframe = $('#iframe-vis'),
@@ -146,15 +171,21 @@ p.lead {
             <p class="lead" style="margin-top:0">{% trans "Link to this visualisation" %}</p>
             <p><a href="{{ iframe }}">{{ iframe }}</a></p>
 
+            <p class="lead">{% trans "Select a size" %}</p>
 
-            <p class="lead">{% trans "Embed into your website" %}</p>
-            <p>{% trans "Just copy &amp; paste the following code into your website." %}</p>
-            <form class="form-inline">
-                <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:4ex" value="600" /> px</label>&nbsp;&nbsp;
+            <select id="chart-selector">
+                <option value='blog'>Blog</blog>
+                <option value='article'>Article Sidebar</blog>
+
+            </select>
+            <p>{% trans "Or use custom size" %}</p>
+            <form class="form-inline" id="chart-embed">
+                <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:4ex" value="606" /> px</label>&nbsp;&nbsp;
                 <label>{% trans "Height" %}: <input type="text" id="embed-height" class="input-small" style="width:4ex" value="400" /> px</label>
 
             <textarea style="font-size: 13px;padding:5px" id="iframe-code" class="well span4" rows="5"><iframe src="{{ iframe }}" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="{{ chart.metadata.publish['embed-width'] }}" height="{{ chart.metadata.publish['embed-height'] }}"></iframe></textarea>
 
+            </form>
 
             <p class="lead">{%trans "Other things to do" %}</p>
 
@@ -172,11 +203,6 @@ p.lead {
                 </a>
             </p>
 
-            <p class="lead">{% trans "Show in Gallery" %}</p>
-
-            <p>{{ "You can show some love to Datawrapper by agreeing to show your visualisation in our <a href='%GALLERY_URL%'>public gallery</a>" | trans | replace({ '%GALLERY_URL%': '/gallery/' }) | raw }}. {% trans "This is absolutely optional." %}</p>
-
-            <label class="checkbox"><input type="checkbox" id="make-public" /> {% trans "Yes, show this chart in the gallery" %}</label>
 
 
 
@@ -197,6 +223,7 @@ p.lead {
             {% endif %}
 
             <iframe src="{{ iframe }}" id="iframe-vis" style="width:{{ chart.metadata.publish['embed-width'] }}px;height:{{ chart.metadata.publish['embed-height'] }}px" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+
 
             <div style="color: #999;margin-top:20px"><b>{% trans "Note" %}:</b> {% trans "It may take a while until the republished chart. You can force reloading of the chart by right-clicking it and selecting 'Reload Iframe'. " %}
 
