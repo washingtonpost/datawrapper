@@ -3,6 +3,7 @@
     "link": "http://www.dw.de",
     "restrict": "@dw.de",
     "locale": "de_DE",
+    "hidden": true,
     "extends": "default",
     "version": "0.9.4"
 }

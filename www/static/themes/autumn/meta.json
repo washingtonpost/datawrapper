@@ -5,6 +5,7 @@
     "restricted": null,
     "locale": "de_DE",
     "version": "0.2.5",
+    "hidden": true,
     "option-filter": {
         "line-chart": {
             "show-grid": true

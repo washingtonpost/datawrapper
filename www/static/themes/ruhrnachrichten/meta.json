@@ -2,6 +2,7 @@
     "title": "Ruhr Nachrichten",
     "link": "http://www.ruhrnachrichten.de",
     "restricted": null,
+    "hidden": true,
     "locale": "de_DE",
     "extends": "default",
     "default_width": 368,
