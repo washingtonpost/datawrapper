@@ -1,6 +1,6 @@
 (function(){
 
-    // Default Theme
+    // The Washington Post Standard Theme
     // -------------
 
     // Every theme will inherit the properties of this
@@ -8,11 +8,11 @@
     // of them. Also, every theme can extend any other
     // existing theme.
 
-    Datawrapper.Themes.Default = $.extend(true, {}, Datawrapper.Themes.Base, {
+    Datawrapper.Themes.Wapo = $.extend(true, {}, Datawrapper.Themes.Base, {
 
         colors: {
             // primary colors
-            palette: ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"],
+            palette: ["#3178b5","#dc463f","#5ea154","#f8b44e"],
             // secondary colors, used in custom color dialog
             // this should contain colors that might be useful
             secondary: ["#000000", '#777777', '#cccccc', '#ffd500', '#6FAA12'],

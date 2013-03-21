@@ -2,7 +2,6 @@
     "title": "Le Monde",
     "link": "http://www.lemonde.fr",
     "restricted": null,
-    "hidden": true,
     "locale": "fr_FR",
     "extends": "default",
     "restrict": "@lemonde.fr",
