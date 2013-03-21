@@ -11,8 +11,20 @@ body, html {
 
 a { color: #0088CC; }
 
+/* Franklin ITC Pro Light */
+@font-face {
+  font-family: "FranklinITCProLight";
+  src: url("/static/fonts/FranklinITCStd-Light.eot");
+  src: url("/static/fonts/FranklinITCStd-Light.otf") format("embedded-opentype"),
+       url("/static/fonts/FranklinITCStd-Light.ttf") format("truetype"),
+       url("/static/fonts/FranklinITCStd-Light.svg") format("svg");
+  font-style: normal;
+  font-weight: normal;
+}
+.wt-franklin-itc-pro-light {font-family: FranklinITCProLight;font-weight:normal; font-style:normal; line-height:normal;}
+
 body.chart {
-    font-family: Helvetica Neue, Arial;
+    font-family: FranklinITCProLight;
     font-weight: 400;
     font-size: 12px;
     margin: 0 5px;
