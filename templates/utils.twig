@@ -49,10 +49,10 @@
 {% block teaserlogin %}
         {% if not user.isLoggedIn %}
                 <a href="#login" class="btn btn-primary btn-login btn-large">
-                    <i class="icon-user icon-white"></i> {% trans "Login / Sign Up" %}
+                    <i class="icon-user icon-white"></i> {% trans "Login with your TWPN account" %}
                 </a>
                 <a href="/chart/create" class="btn btn-login btn-large">
-                    <i class="icon-pencil"></i> {% trans "Try it now!" %}
+                    <i class="icon-pencil"></i> {% trans "Make a chart" %}
                 </a>
         {% else %}
                 <a href="/chart/create" class="btn-primary btn btn-large"><i class="icon-pencil icon-white"></i> {% trans "Create a Chart" %}</a>

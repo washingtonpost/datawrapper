@@ -43,7 +43,7 @@
      </div>
 </div>
 
-<div class="row arguments">
+{# <div class="row arguments">
     <div class="span4">
         <h2>{% trans "Easy to use" %}</h2>
         <p>{% trans "This little tool reduces the time needed to create a correct chart and embed it into any website from hours to seconds. It makes charting easy, and helps you avoiding common pitfalls." %}</p>
@@ -56,7 +56,7 @@
         <h2>{% trans "Customizable" %}</h2>
         <p>{{ "We encourage you to <a href='#URL'>customize the charts layout</a>, fonts and colors to make them integrate nicely in your website. Strengthen your own brand, not ours." | trans | replace({ '#URL': 'http://docs.datawrapper.de/%lang%/howtouse#customize'}) | replace({ '%lang%': language }) | raw }}</p>
     </div>
-</div>
+</div> #}
 
 <div class="gallery">
     <div class="big-head">
@@ -70,7 +70,7 @@
     </ul>
 </div>
 
-<div class="row docs">
+{# <div class="row docs">
     <div class="big-head">
         <h1>{% trans "Want to learn more?" %}</h1>
     </div>
@@ -94,7 +94,7 @@
     </div>
 
 
-</div>
+</div> #}
 
 
 {{ parent() }}
