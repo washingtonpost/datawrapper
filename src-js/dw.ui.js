@@ -156,8 +156,10 @@
                   pwd = $('.login-pwd', loginForm).val(),
                   hash = hmac(hmac(pwd, lgBtn.data('salt')).toString(), String(lgBtn.data('time'))).toString(),
                   payload = {
-                     email: $('.login-email', loginForm).val(),
-                     pwhash: hash,
+                     // email: $('.login-email', loginForm).val(),
+                     // pwhash: hash,
+                     user: $('.login-email', loginForm).val(),
+                     password: pwd,
                      time: lgBtn.data('time'),
                      keeplogin: $('.keep-login', loginForm).attr('checked') == 'checked'
                   };

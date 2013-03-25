@@ -26,20 +26,47 @@ $app->put('/account/lang', function() use ($app) {
 /* login user */
 $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
-    //  v-- don't expire login anymore
-    $user = UserQuery::create()->findOneByEmail($payload->email);
-    if (!empty($user) && $user->getDeleted() == false) {
-        $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
-        if ($hash === $payload->pwhash) {
+    // First, check username against LDAP
+
+    $user = $payload->user;
+    $ds=ldap_connect("***REMOVED***");
+    try {
+        $r = ldap_bind($ds, "${user}@***REMOVED***", $payload->password);
+        $user = UserQuery::create()->findOneByEmail($payload->user);
+
+        if (!empty($user)) {
             DatawrapperSession::login($user, $payload->keeplogin == true);
             ok();
         } else {
-            Action::logAction($user, 'wrong-password', json_encode(get_user_ips()));
-            error('login-invalid', _('The password is incorrect.'));
+            $user = new User();
+            $user->setCreatedAt(time());
+            $user->setEmail($payload->user);
+            $user->setPwd("via_ldap");
+            $user->setLanguage("en_GB");
+            $user->setRole("editor");
+            $user->save();
+            DatawrapperSession::login($user, $payload->keeplogin == true);
+            ok();
         }
-    } else {
-        error('login-email-unknown', _('The email is not registered yet.'));
+
+    } catch (Exception $e) {
+        error('login-invalid', _('The login information is incorrect.'));
     }
+
+
+
+    // if (!empty($user) && $user->getDeleted() == false) {
+    //     $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
+    //     if ($hash === $payload->pwhash) {
+    //         DatawrapperSession::login($user, $payload->keeplogin == true);
+    //         ok();
+    //     } else {
+    //         Action::logAction($user, 'wrong-password', json_encode(get_user_ips()));
+    //         error('login-invalid', _('The password is incorrect.'));
+    //     }
+    // } else {
+    //     error('login-email-unknown', _('The email is not registered yet.'));
+    // }
 });
 
 /* return the server salt for secure auth */
