@@ -7,7 +7,8 @@ function get_chart_content($chart, $user, $minified = false, $path = '') {
 
     $next_theme_id = $chart->getTheme();
 
-    $locale = $user->getLanguage();
+    // $locale = $user->getLanguage();
+    $locale = 'en-GB';
     $themeLocale = null;
 
     while (!empty($next_theme_id)) {
