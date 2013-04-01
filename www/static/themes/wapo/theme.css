@@ -41,6 +41,7 @@ h1 {
 }
 
 h1 span {
+    padding:5px;
 }
 
 .chart p { margin: 5px 0 10px!important; line-height: 19px;}
