@@ -77,7 +77,7 @@ function error_chart_not_writable() {
 function error_mycharts_need_login() {
     error_page('mycharts',
         _('Whoops! You need to be logged in.'),
-        _('Good news is, sign up is free and takes less than 20 seconds.')
+        _('Good news is, you can log in with your TWPN account.')
     );
 }
 
