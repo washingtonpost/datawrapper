@@ -29,7 +29,7 @@ function get_chart_content($chart, $user, $minified = false, $path = '') {
     // $chartLocale = $chart->getLanguage();
     // if (!empty($chartLocale)) $locale = $chartLocale;
 
-    $abs = 'http://' . $GLOBALS['dw_config']['domain'];
+    $abs = 'http://' . $GLOBALS['dw_config']['chart_domain'];
 
     $debug = $GLOBALS['dw_config']['debug'] == true;
 
