@@ -219,3 +219,8 @@ svg .axis, svg .tick, svg .grid, svg rect {
 .line-chart .tooltip {
     border-radius: 5px;
 }
+
+/* hide full screen button */
+#header .chart:hover .fs-btn {
+    display: none;
+}
