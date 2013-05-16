@@ -28,7 +28,7 @@ body.chart {
     font-weight: 400;
     font-size: 12px;
     margin: 0 5px;
-    padding:10px;
+    padding:10px 10px 20px;
     background: #fff;
     overflow: visible;
     overflow-x:hidden;
