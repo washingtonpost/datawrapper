@@ -256,7 +256,7 @@
                     show_val = false;
                     if (slblw > d.width) show_lbl = false;
                 }
-                if (me.invertLabel(me.getSeriesColor(series, r, useNegativeColor))) lblClass += ' inverted';
+                if (me.invertLabel(fill)) lblClass += ' inverted';
             }
 
             return { lblClass: lblClass, val_align: val_align, show_lbl: show_lbl,
