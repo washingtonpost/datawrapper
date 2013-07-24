@@ -56,6 +56,8 @@
                         fill = me.getSeriesColor(series, r, useNegativeColor),
                         stroke = d3.cie.lch(d3.rgb(fill)).darker(0.6).toString();
 
+		    console.log(fill);
+
                     if (labelsInsideBars) d.x -= 10;
 
                     // draw bar
