@@ -374,7 +374,7 @@
             }
             //color = hsl.toString();
             color = lch.toString();
-
+	    console.log(color);
             return color;
             //return me.theme.colors[me.chart.isHighlighted(series) ? highlight : main];
         },
