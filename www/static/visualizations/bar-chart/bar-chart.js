@@ -115,7 +115,8 @@
                 });
 
                 _.each(me.__seriesLabels[series.name], function(lbl) {
-                    var pos = me.labelPosition(series, s, 0), lpos;
+                    console.log('updating', me);
+		    var pos = me.labelPosition(series, s, 0), lpos;
                     if (lbl.hasClass('value')) {
                         // update value
                         $('span', lbl).html(me.chart.formatValue(series.data[0]));
@@ -245,6 +246,8 @@
                 show_val = true,
                 lblClass = me.chart.hasHighlight() && me.chart.isHighlighted(series) ? ' highlighted' : '';
 
+		console.log('labelPosition', me);
+
             if (me.get('labels-inside-bars', false)) {
                 lbl_x = val >= 0 ? d.x + 10 : d.x + d.width - 10;
                 val_x = val >= 0 ? d.x + d.width - 10 : d.x + 10;
@@ -258,6 +261,7 @@
                     show_val = false;
                     if (slblw > d.width) show_lbl = false;
                 }
+		console.log(fill);
                 if (me.invertLabel(fill)) lblClass += ' inverted';
             }
 
