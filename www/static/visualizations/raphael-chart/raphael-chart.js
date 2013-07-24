@@ -338,6 +338,8 @@
                 colorByRow = me.meta['color-by-row'] === true,
                 colorKey = colorByRow ? me.chart.rowLabels()[row] : series.name;
 
+	console.log(me);
+
             var userCustomColors = me.get('custom-colors', {});
             if (series && userCustomColors[colorKey]) {
                 // highest priority for user-defined series colors
@@ -374,7 +376,6 @@
             }
             //color = hsl.toString();
             color = lch.toString();
-	    console.log(color);
             return color;
             //return me.theme.colors[me.chart.isHighlighted(series) ? highlight : main];
         },
