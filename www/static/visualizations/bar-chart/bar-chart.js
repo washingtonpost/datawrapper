@@ -56,7 +56,6 @@
                         fill = me.getSeriesColor(series, r, useNegativeColor),
                         stroke = d3.cie.lch(d3.rgb(fill)).darker(0.6).toString();
 
-		    console.log(fill);
 
                     if (labelsInsideBars) d.x -= 10;
 
@@ -115,7 +114,6 @@
                 });
 
                 _.each(me.__seriesLabels[series.name], function(lbl) {
-                    console.log('updating', me);
 		    var pos = me.labelPosition(series, s, 0), lpos;
                     if (lbl.hasClass('value')) {
                         // update value
@@ -246,8 +244,6 @@
                 show_val = true,
                 lblClass = me.chart.hasHighlight() && me.chart.isHighlighted(series) ? ' highlighted' : '';
 
-		console.log('labelPosition', me);
-
             if (me.get('labels-inside-bars', false)) {
                 lbl_x = val >= 0 ? d.x + 10 : d.x + d.width - 10;
                 val_x = val >= 0 ? d.x + d.width - 10 : d.x + 10;
@@ -261,7 +257,6 @@
                     show_val = false;
                     if (slblw > d.width) show_lbl = false;
                 }
-		console.log(fill);
                 if (me.invertLabel(fill)) lblClass += ' inverted';
             }
 
