@@ -338,7 +338,6 @@
                 colorByRow = me.meta['color-by-row'] === true,
                 colorKey = colorByRow ? me.chart.rowLabels()[row] : series.name;
 
-	console.log(me);
 
             var userCustomColors = me.get('custom-colors', {});
             if (series && userCustomColors[colorKey]) {
