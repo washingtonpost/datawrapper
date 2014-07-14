@@ -1,5 +1,6 @@
 {% extends "core.twig" %}
 
+
 {% block content %}
 
     {% if config.custom_home %}
@@ -13,11 +14,11 @@
 
              <div class="span8 offset2">
                 <p style="font-size:36px;font-weight:300;line-height:42px">Datawrapper @ The Washington Post</p>
-                TODO Add help text
             </div>
         </div>
 
-    {% endif %}
+{% embed "home-login.twig" %}{% endembed %}
+{% endif %}
 
 {{ parent() }}
 
