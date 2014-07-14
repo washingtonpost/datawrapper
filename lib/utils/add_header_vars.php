@@ -124,7 +124,7 @@ function add_header_vars(&$page, $active = null, $page_css = null) {
         $headlinks[] = array(
             'url' => '#login',
             'id' => 'login',
-            'title' => $config['prevent_guest_access'] ? __('Login') : __('Login / Sign Up'),
+            'title' => $config['prevent_guest_access'] ? __('Login') : __('Login'),
             'icon' => 'fa fa-sign-in'
         );
     }
