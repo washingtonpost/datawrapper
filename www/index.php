@@ -68,7 +68,8 @@ $app->hook('slim.before.router', function () use ($app, $dw_config) {
     $user = DatawrapperSession::getUser();
     if (!$user->isLoggedIn() && !empty($dw_config['prevent_guest_access'])) {
         $req = $app->request();
-        if (UserQuery::create()->filterByRole(array('admin', 'sysadmin'))->count() > 0) {
+        // TODO Disable admin account requirement
+        if (TRUE || UserQuery::create()->filterByRole(array('admin', 'sysadmin'))->count() > 0) {
             if ($req->getResourceUri() != '/login' &&
                 strncmp($req->getResourceUri(), '/account/invite/', 16) && // and doesn't start with '/account/invite/'
                 strncmp($req->getResourceUri(), '/account/reset-password/', 24)) { // and doesn't start with '/account/reset-password/'
