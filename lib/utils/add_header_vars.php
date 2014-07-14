@@ -28,6 +28,9 @@ function add_header_vars(&$page, $active = null, $page_css = null) {
     if (!isset($config['prevent_guest_access'])) {
         $config['prevent_guest_access'] = false;
     }
+    if (!isset($config['prevent_settings_access'])) {
+        $config['prevent_settings_access'] = false;
+    }
 
     $user = DatawrapperSession::getUser();
     $headlinks = array();
@@ -113,13 +116,15 @@ function add_header_vars(&$page, $active = null, $page_css = null) {
         header_nav_hook($headlinks, 'mycharts');
 
 
-        $headlinks[] = array(
-            'url' => '/account/settings',
-            'id' => 'signout',
-            'icon' => 'fa fa-wrench',
-            'justicon' => true,
-            'tooltip' => __('Settings')
-        );
+        if (!$config['prevent_settings_access']) {
+            $headlinks[] = array(
+                'url' => '/account/settings',
+                'id' => 'signout',
+                'icon' => 'fa fa-wrench',
+                'justicon' => true,
+                'tooltip' => __('Settings')
+            );
+        }
     } else {
         $headlinks[] = array(
             'url' => '#login',
@@ -178,6 +183,7 @@ function add_header_vars(&$page, $active = null, $page_css = null) {
     $page['page_css'] = $page_css;
     $page['invert_navbar'] = isset($config['invert_header']) && $config['invert_header'] || substr($config['domain'], -4) == '.pro';
     $page['noSignup'] = $config['prevent_guest_access'];
+    $page['noSettings'] = $config['prevent_settings_access'];
     $page['footer'] = DatawrapperHooks::execute(DatawrapperHooks::GET_FOOTER);
 
     $uri = $app->request()->getResourceUri();
