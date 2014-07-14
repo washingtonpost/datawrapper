@@ -46,6 +46,9 @@ prevent_guest_charts: false
 ## (admin needs to create any accounts)
 prevent_guest_access: false
 
+## prevent account settings access
+prevent_settings_access: false
+
 ## the following links are shown in the footer
 ## please link to your own imprint (and not ours)
 footer_links:
