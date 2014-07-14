@@ -27,7 +27,7 @@ $app->get('/chart/:id/publish', function ($id) use ($app) {
             'themes' => DatawrapperTheme::all(),
             'exportStaticImage' => !empty($cfg['phantomjs']),
             'chartActions' => DatawrapperHooks::execute(DatawrapperHooks::GET_CHART_ACTIONS, $chart),
-            'estExportTime' => ceil(JobQuery::create()->estimatedTime('export') / 60)
+            'estExportTime' => ceil(JobQuery::create()->estimatedTime('export_image') / 60)
         );
         add_header_vars($page, 'chart', 'chart-editor/publish.css');
         add_editor_nav($page, 4);
