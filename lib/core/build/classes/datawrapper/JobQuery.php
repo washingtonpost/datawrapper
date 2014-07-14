@@ -21,7 +21,7 @@ class JobQuery extends BaseJobQuery {
      */
     public function estimatedTime($type) {
         $avgTimePerJob = array(
-            'export' => 5
+            'export_image' => 5
         );
         $numJobsInQueue = $this->filterByType($type)->filterByStatus('queued')->count();
         return $numJobsInQueue * $avgTimePerJob[$type];
