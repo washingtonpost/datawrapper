@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% if noSettings %}
+    Settings have been disabled.
+{% else %}
 <div class="docs">
     <ul class="nav nav-pills pull-right">
         <li><a href="#-status">{% trans "Account Status" %}</a></li>
@@ -352,6 +355,7 @@ $(function() {
 });
 
 </script>
+{% endif %}
 
 {{ parent() }}
 {% endblock %}
