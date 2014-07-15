@@ -12,7 +12,8 @@ Datawrapper is a tool that enables anyone to create enticing visualizations in s
 
     php scripts/plugin.php install theme-default
     php scripts/plugin.php install "visualization*"
-
+    php scripts/plugin.php install core-vis-options
+    php scripts/plugin.php install publish-s3
 
 It draws inspiration from [ManyEyes](http://www-958.ibm.com/software/data/cognos/manyeyes/) and [GoogleCharts](https://developers.google.com/chart/) but remains entirely open-source and independent from a third-party server.
 
