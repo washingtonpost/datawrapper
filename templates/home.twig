@@ -15,7 +15,12 @@
         </div>
 
         <div class="row">
-            {% embed "home-login.twig" %}{% endembed %}
+            <div class="span6">
+                {% embed "home-login.twig" %}{% endembed %}
+            </div>
+            <div class="span6">
+                {% embed "home-help.twig" %}{% endembed %}
+            </div>
         </div>
 
     {% endif %}
