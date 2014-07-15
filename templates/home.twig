@@ -1,6 +1,5 @@
 {% extends "core.twig" %}
 
-
 {% block content %}
 
     {% if config.custom_home %}
@@ -9,16 +8,17 @@
         {{ block('home') }}
 
     {% else %}
-
         <div class="row">
-
              <div class="span8 offset2">
                 <p style="font-size:36px;font-weight:300;line-height:42px">Datawrapper @ The Washington Post</p>
             </div>
         </div>
 
-{% embed "home-login.twig" %}{% endembed %}
-{% endif %}
+        <div class="row">
+            {% embed "home-login.twig" %}{% endembed %}
+        </div>
+
+    {% endif %}
 
 {{ parent() }}
 
