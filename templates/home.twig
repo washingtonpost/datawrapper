@@ -68,19 +68,6 @@
     <img src = "/static/img/wapo/line_chart_example.png" style = "width:300px">
 </div>
 
-
-<div class="gallery">
-    <div class="big-head">
-        <h1>{% trans "Created with Datawrapper" %}.</h1>
-        <p>{% trans "Need some inspiration? See what others have created <a href='/gallery/'>in our gallery</a>." %}</p>
-    </div>
-    <ul class="thumbnails">
-        {% for chart in recent_charts %}
-            {{ block('gallerythumb') }}
-        {% endfor %}
-    </ul>
-</div>
-
 {{ parent() }}
 
 {% endblock %}
