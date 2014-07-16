@@ -8,9 +8,7 @@
         {{ block('home') }}
 
     {% else %}
-
         <div class="row">
-
              <div class="span8 offset2">
                 <p style="font-size:36px;font-weight:300;line-height:42px">Congratulations! You have successfully installed Datawrapper.</p>
                 <h2>Customize this page</h2>
@@ -28,6 +26,18 @@
             </div>
         </div>
 
+<<<<<<< HEAD
+=======
+        <div class="row">
+            <div class="span6">
+                {% embed "home-login.twig" %}{% endembed %}
+            </div>
+            <div class="span6">
+                {% embed "home-help.twig" %}{% endembed %}
+            </div>
+        </div>
+
+>>>>>>> daf954ca1b155e6bc9835886fe5bd962f57460e9
     {% endif %}
 
 {{ parent() }}
