@@ -1,6 +1,5 @@
 {% extends "core.twig" %}
 
-
 {% block content %}
 
     {% if config.custom_home %}
@@ -13,12 +12,23 @@
         <div class="row">
 
              <div class="span8 offset2">
-                <p style="font-size:36px;font-weight:300;line-height:42px">Datawrapper @ The Washington Post</p>
+                <p style="font-size:36px;font-weight:300;line-height:42px">Congratulations! You have successfully installed Datawrapper.</p>
+                <h2>Customize this page</h2>
+                <p>To create a custom homepage for your Datawrapper installation
+                    you have to do the following steps:</p>
+                <ol>
+                    <li>Create a new <a href="http://twig.sensiolabs.org/">Twig template</a> (that is basically an HTML file with
+                        some special tags) and store it into <b>/templates/custom/</b>, e.g. <b>my-home-template.twig</b>.</li>
+                    <li>Edit <b>config.yaml</b> and add the following line. Replace <i>my-home-template</i>
+                        with the filename of your new Twig template (without the extension .twig):
+                        <pre>custom_home: my-home-template</pre>
+                    <li>That's it</li>
+                </ol>
+
             </div>
         </div>
 
-{% embed "home-login.twig" %}{% endembed %}
-{% endif %}
+    {% endif %}
 
 {{ parent() }}
 
