@@ -20,7 +20,7 @@
 
     <div class="teaser-mobile big-head span12">
         <h1 style="font-weight:700">Datawrapper on The Washington Post</h1>
-        <p>{% trans "Create simple, correct and embeddable charts in minutes." %}</p>
+        <p>{% trans "Create simple, embeddable charts in minutes." %}</p>
 
         <div style="text-align:center; margin: 20px 0 40px">
             {{ block('teaserlogin') }}
@@ -63,6 +63,14 @@
     <img src = "/static/img/wapo/line_chart_data.png">
     <span style = "font-size:38px">&#10142;</span>
     <img src = "/static/img/wapo/line_chart_example.png" style = "width:300px">
+</div>
+
+<h2>{% trans "Useful links" %}</h2>
+<div style="margin: 20px 0 40px">
+<ul>
+    <li><a href="http://docs.datawrapper.de/en/quickstart">Datawrapper quick start</a></li>
+    <li><a href="http://docs.datawrapper.de/en/tutorial">Datawrapper tutorial</a></li>
+</ul>
 </div>
 
 {{ parent() }}
