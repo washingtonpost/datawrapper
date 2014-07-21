@@ -111,8 +111,11 @@ define(function() {
                         $('input', loginForm).val('');
                         if (loginForm.data('target')) location.href = loginForm.data('target');
                         else {
-                            if (location.pathname == "/login") location.pathname = "/";
-                            else location.reload();
+                            if (location.pathname == "/login") {
+                                location.replace('/');
+                            } else {
+                                location.reload();
+                            }
                         }
                     } else {
                         if (data.code == 'login-invalid') {
