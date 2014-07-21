@@ -48,7 +48,7 @@ $app->post('/auth/login', function() use($app) {
             ok();
         }
     } catch (Exception $e) {
-        error('login-email-unknown', __('The email is not registered yet.'));
+        error('login-invalid', __('Invalid login.'));
     }
 });
 
