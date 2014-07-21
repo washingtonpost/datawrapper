@@ -444,31 +444,12 @@
             me.__lastDomain = domain.slice(0);
         },
 
-        hovers: function(column) {
-            var me = this,
-                theme = me.theme();
-            _.each(me.getBarColumns(), function(col) {
-                _.each(me.__labels[col.name()], function(lbl) {
-                    if (column !== undefined && col.name() == column.name()) {
-                        lbl.addClass('hover');
-                        if (lbl.hasClass('showOnHover')) lbl.show(0.5);
-                    } else {
-                        lbl.removeClass('hover');
-                        if (lbl.hasClass('showOnHover')) lbl.hide(0.5);
-                    }
-                    _.each(me.__elements[col.name()], function(el) {
-                        var fill = me.getBarColor(col, el.data('row'), me.get('negative-color', false)), stroke;
-                        if (column !== undefined && col.name() == column.name()) fill = chroma.color(fill).darken(14).hex();
-                        stroke = chroma.color(fill).darken(theme.columnChart.darkenStroke).hex();
-                        if (el.attrs.fill != fill || el.attrs.stroke != stroke)
-                            el.animate({ fill: fill, stroke: stroke }, 50);
-                    });
-                });
-            });
+        hover: function() {
+            
         },
 
         unhoverSeries: function() {
-            this.hoverSeries();
+            
         },
 
         gridVisible: function() {
