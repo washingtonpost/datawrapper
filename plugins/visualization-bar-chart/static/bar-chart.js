@@ -353,6 +353,7 @@
                     : d.x - 10,
                 val_align = lbl_left ? 'left' : 'right',
                 show_lbl = true,
+                //set to false to hide values on bars
                 show_val = true,
                 lblClass = me.chart().hasHighlight() && me.chart().isHighlighted(bar) ? ' highlighted' : '';
 
@@ -378,32 +379,12 @@
             
         },
 
-        hover: function(hover_key) {
-            var me = this,
-                barvalues = me.getBarValues(),
-                l = barvalues.length;
+        hover: function() {
 
-            _.each(barvalues, function(bar) {
-                _.each(me.__labels[bar.name], function(lbl) {
-                    if (hover_key !== undefined && bar.name == hover_key) {
-                        lbl.addClass('hover');
-                    } else {
-                        lbl.removeClass('hover');
-                    }
-                });
-                if (l > 50) return; // no color animation for big data
-                _.each(me.__elements[bar.name], function(el) {
-                    var fill = me.getKeyColor(bar.name, bar.value, me.get('negative-color', false)), stroke;
-                    if (hover_key !== undefined && bar.name == hover_key) fill = chroma.color(fill).darken(14).hex();
-                    stroke = chroma.color(fill).darken(14).hex();
-                    if (el.attrs.fill != fill || el.attrs.stroke != stroke)
-                        el.animate({ fill: fill, stroke: stroke }, 50);
-                });
-            });
         },
 
         unhoverSeries: function() {
-            this.hoverSeries();
+            
         }
 
     });
