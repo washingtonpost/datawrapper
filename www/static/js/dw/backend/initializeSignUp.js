@@ -112,7 +112,7 @@ define(function() {
                         if (loginForm.data('target')) location.href = loginForm.data('target');
                         else {
                             if (location.pathname == "/login") {
-                                location.replace('/');
+                                window.location = '/';
                             } else {
                                 location.reload();
                             }
