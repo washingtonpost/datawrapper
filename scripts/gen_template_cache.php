@@ -1,12 +1,28 @@
 <?php
 
+/*
+ * this scripts re-generates the PHP cache for all Twig templates
+ * this step is needed because xgettext cannot parse Twig templates
+ * (but PHP scripts)
+ */
+
+define('ROOT_PATH', dirname(dirname(__FILE__)) . '/');
+define('NO_SLIM', 1);
+
+require_once ROOT_PATH . 'lib/bootstrap.php';
+require_once ROOT_PATH . 'lib/utils/themes.php';
+require_once ROOT_PATH . 'vendor/Twig/Autoloader.php';
+require_once ROOT_PATH . 'vendor/htmlpurifier/HTMLPurifier.standalone.php';
+
+date_default_timezone_set('Europe/Berlin');
+
 // taken from http://twig.sensiolabs.org/doc/extensions/i18n.html#extracting-template-strings
 
-require_once dirname(__FILE__) . '/../vendor/Twig/Autoloader.php';
 Twig_Autoloader::register();
 
-$tplDir = dirname(__FILE__) . '/../templates';
-$tmpDir = dirname(__FILE__) . '/tmpl_cache/';
+$tplDir = ROOT_PATH . 'templates';
+$tmpDir = ROOT_PATH . 'scripts/tmpl_cache/';
+$tmpDirPlugins = ROOT_PATH . 'scripts/tmpl_cache/plugins/';
 $loader = new Twig_Loader_Filesystem($tplDir);
 
 // force auto-reload to always have the latest version of the template
@@ -15,34 +31,13 @@ $twig = new Twig_Environment($loader, array(
     'auto_reload' => true
 ));
 
-// Twig Extension to convert strings to nice JavaScript class names, e.g. bar-chart --> BarChart
-$twig->addFilter('classify', new Twig_Filter_Function('str_classify'));
-function str_classify($s) {
-    return preg_replace('/\s/', '', ucwords(preg_replace('/[_\-\.]/', ' ', $s)));
-}
-$twig->addFilter('json', new Twig_Filter_Function('toJSON'));
-function toJSON($arr) {
-    return json_encode($arr);
-}
+if (!file_exists($tmpDirPlugins)) mkdir($tmpDirPlugins);
 
-// Twig Extension to clean HTML from malicious code
-require_once '../vendor/htmlpurifier/HTMLPurifier.standalone.php';
-$config = HTMLPurifier_Config::createDefault();
-$config->set('HTML.Allowed', 'a[href],p,b,strong,u,i,em,q,blockquote,*[style]');
-$_HTMLPurifier = new HTMLPurifier($config);
-$twig->addFilter('purify', new Twig_Filter_Function('str_purify'));
+require_once ROOT_PATH . 'lib/utils/twig-init.php';
 
-function str_purify($dirty_html) {
-    global $_HTMLPurifier;
-    return $_HTMLPurifier->purify($dirty_html);
-}
-
-
-// loae I18n extension for Twig
-$twig->addExtension(new Twig_Extension_I18n());
 
 // iterate over all your templates
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), RecursiveIteratorIterator::LEAVES_ONLY) as $file)
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir, RecursiveDirectoryIterator::FOLLOW_SYMLINKS), RecursiveIteratorIterator::LEAVES_ONLY) as $file)
 {
     if (substr($file, -5) == ".twig") {
         // force compilation
@@ -51,7 +46,12 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), 
         $cacheFile = $twig->getCacheFilename($tmplPath);
         $compiled = file_get_contents($cacheFile);
         $outPath = $tmpDir . str_replace("/", "__", $tmplPath).".php";
+        if (substr($tmplPath, 0, 8) == 'plugins/') {
+            $outPath = $tmpDirPlugins . str_replace("/", "__", substr($tmplPath, 8)).".php";
+        }
         file_put_contents($outPath, $compiled);
         unlink($cacheFile);
     }
 }
+// clean up
+exec('rm -Rf ??');

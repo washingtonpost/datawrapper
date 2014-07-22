@@ -1,106 +1,36 @@
 <?php
 
-require_once '../lib/utils/themes.php';
+if (DatawrapperHooks::hookRegistered(DatawrapperHooks::GET_ADMIN_PAGES)) {
+    // pull admin pages from plugins
+    $__dw_admin_pages = DatawrapperHooks::execute(DatawrapperHooks::GET_ADMIN_PAGES);
+
+    // order admin pages by index "order"
+    usort($__dw_admin_pages, function($a, $b) {
+        return (isset($a['order']) ? $a['order'] : 9999) - (isset($b['order']) ? $b['order'] : 9999);
+    });
 
 
-function add_adminpage_vars(&$page, $active) {
-    $page['adminmenu'] = array(
-        '/admin' => 'Dashboard',
-        '/admin/themes' => 'Manage Themes',
-        '/admin/users' => 'Manage Users'
-    );
-    $page['adminactive'] = $active;
-}
+    foreach ($__dw_admin_pages as $admin_page) {
 
+        $app->map('/admin' . $admin_page['url'], function() use ($app, $admin_page, $__dw_admin_pages) {
+            disable_cache($app);
 
-$app->get('/admin/?', function() use ($app) {
-    disable_cache($app);
-
-    $user = DatawrapperSession::getUser();
-    if ($user->isAdmin()) {
-
-        $metrics = array('users_signed', 'users_activated', 'charts_uploaded', 'charts_described', 'charts_visualized', 'charts_published');
-
-        $con = Propel::getConnection();
-        $data = array();
-
-        foreach ($metrics as $metric) {
-            $data[$metric] = array();
-            $sql = 'SELECT MONTH(time) m, DAYOFMONTH(time) d, value FROM `stats` WHERE metric = "'.$metric.'" GROUP BY m, d ORDER BY `time`  DESC LIMIT 30';
-            $rs = $con->query($sql);
-            $res = array();
-            foreach ($rs as $r) {
-                $lbl = $r['d'].'/'.$r['m'];
-                $val = $r['value'];
-                $data[$metric][$lbl] = $val;
+            $user = DatawrapperSession::getUser();
+            if ($user->isAdmin()) {
+                $page_vars = array(
+                    'title' => $admin_page['title'],
+                    'adminmenu' => array(),
+                    'adminactive' => $admin_page['url']
+                );
+                // add admin pages to menu
+                foreach ($__dw_admin_pages as $adm_pg) {
+                    $page_vars['adminmenu'][$adm_pg['url']] = $adm_pg['title'];
+                }
+                add_header_vars($page_vars, 'admin');
+                call_user_func_array($admin_page['controller'], array($app, $page_vars));
+            } else {
+                $app->notFound();
             }
-        }
-
-        $user_csv = "Date;Activated;Signed\\n";
-        $chart_csv = "Date;Uploaded;Described;Visualized;Published\\n";
-
-        for ($ago = 30; $ago >= 0; $ago--) {
-            $lbl = date('j/n', time() - $ago*86400);
-            $user_csv .= $lbl.';';
-            $user_csv .= isset($data['users_activated'][$lbl]) ? $data['users_activated'][$lbl] : '-';
-            $user_csv .= ';';
-            $user_csv .= isset($data['users_signed'][$lbl]) ? $data['users_signed'][$lbl] : '-';
-            $user_csv .= "\\n";
-
-            $chart_csv .= $lbl.';';
-            $chart_csv .= isset($data['charts_uploaded'][$lbl]) ? $data['charts_uploaded'][$lbl] : '-';
-            $chart_csv .= ';';
-            $chart_csv .= isset($data['charts_described'][$lbl]) ? $data['charts_described'][$lbl] : '-';
-            $chart_csv .= ';';
-            $chart_csv .= isset($data['charts_visualized'][$lbl]) ? $data['charts_visualized'][$lbl] : '-';
-            $chart_csv .= ';';
-            $chart_csv .= isset($data['charts_published'][$lbl]) ? $data['charts_published'][$lbl] : '-';
-            $chart_csv .= "\\n";
-        }
-
-        $page = array(
-            'title' => 'Datawrapper Admin',
-            'user_csv' => $user_csv,
-            'chart_csv' => $chart_csv
-        );
-        add_header_vars($page, 'admin');
-        add_adminpage_vars($page, '/admin');
-        $app->render('admin-dashboard.twig', $page);
-    } else {
-        $app->notFound();
+        })->via('GET', 'POST');
     }
-});
-
-
-
-
-$app->get('/admin/themes/?', function() use ($app) {
-    $user = DatawrapperSession::getUser();
-    if ($user->isAdmin()) {
-        $page = array(
-            'title' => 'Datawrapper Admin',
-            'themes' => get_themes_meta(),
-            'count' => count_charts_per_themes()
-        );
-        add_header_vars($page, 'admin');
-        add_adminpage_vars($page, '/admin/themes');
-        $app->render('admin-themes.twig', $page);
-    } else {
-        $app->notFound();
-    }
-});
-
-
-$app->get('/admin/users/?', function() use ($app) {
-    $user = DatawrapperSession::getUser();
-    if ($user->isAdmin()) {
-        $page = array(
-            'title' => 'Datawrapper Admin',
-        );
-        add_header_vars($page, 'admin');
-        add_adminpage_vars($page, '/admin/users');
-        $app->render('admin-users.twig', $page);
-    } else {
-        $app->notFound();
-    }
-});
+}

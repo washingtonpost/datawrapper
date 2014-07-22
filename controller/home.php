@@ -2,7 +2,7 @@
 
 //GET route
 $app->get('/', function () use ($app) {
-    //disable_cache($app);
+    disable_cache($app);
 
     if ($app->request()->get('c')) {
         // found link to a legacy chart
@@ -13,21 +13,13 @@ $app->get('/', function () use ($app) {
         $charts = ChartQuery::create()->findPKs($chart_ids);
 
         $page = array(
-            'title' => 'Datawrapper',
+            'title' => '',
             'pageClass' => 'home',
             'recent_charts' => $charts
         );
         add_header_vars($page, '');
 
-        if (!empty($GLOBALS['dw_config']['disclaimer'])) {
-            $page['disclaimer'] = $GLOBALS['dw_config']['disclaimer'];
-        }
-
         $app->render('home.twig', $page);
     }
 });
 
-$app->get('/legacy/actions/export.php', function() use ($app) {
-    $c = $app->request()->get('c');
-    $app->redirect('/legacy/data/'.$c.'.csv');
-});

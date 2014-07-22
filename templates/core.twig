@@ -2,23 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Datawrapper</title>
+    <title>Datawrapper{% if title and title != 'Datawrapper' %} :: {{ title }}{% endif %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Datawrapper is an open source tool helping everyone to create simple, correct and embeddable charts in minutes.">
     <meta name="author" content="Mirko Lorenz, Nicolas Kayser-Bril, Gregor Aisch">
     <meta http-equiv="X-UA-Compatible" content="IE=8" />
 
     <!-- Le styles -->
-    <link href="/static/vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-   <!-- <link href="/static/vendor/bootstrap/css/bootstrap-datawrapper-2.css" rel="stylesheet">-->
-    <!-- <link href="/static/vendor/fontawesome/css/font-awesome.css" rel="stylesheet"> -->
-    <style>
-      body {
-        padding-top: 30px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-    <link href="/static/vendor/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/vendor/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="/static/css/datawrapper.css" rel="stylesheet">
+    <link href="/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -27,36 +21,59 @@
       <link href="/static/css/datawrapper-ie.css" rel="stylesheet">
     <![endif]-->
 
-    <script type="text/javascript" src="/static/vendor/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/vendor/underscore/underscore-min.js"></script>
+    {% if config.custom_css %}<link href="/static/custom/{{ config.custom_css }}" rel="stylesheet">{% endif %}
+
+    <script type="text/javascript" src="/static/vendor/require-js/require-2.1.8.min.js"></script>
+    <script type="text/javascript">
+        require.config({
+            baseUrl: '/static',
+            paths: {
+                dw: 'js/dw',
+                handsontable: 'vendor/handsontable/jquery.handsontable.full'
+            },
+            urlArgs: 'v={{ DW_VERSION }}'
+        });
+    </script>
+    <script type="text/javascript" src="/static/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/underscore/underscore-1.5.2.min.js"></script>
     <script type="text/javascript" src="/static/vendor/cryptojs/hmac-sha256.js"></script>
     <script type="text/javascript" src="/static/vendor/globalize/globalize.js"></script>
     <script type="text/javascript" src="/static/vendor/globalize/cultures/globalize.culture.{{ locale | replace({'_':'-'}) }}.js"></script>
-    <script type="text/javascript" src="/static/js/datawrapper-backend-{{ DW_VERSION }}.min.js"></script>
+    {# javascript core 2.0 #}
+    <script type="text/javascript" src="/static/js/dw-2.0.js"></script>
+    <script type="text/javascript" src="/static/js/dw-backend.js"></script>
+
+    {% if page_css %}
+    <link href="/static/css/{{ page_css }}" rel="stylesheet">
+    {% endif %}
+
+    {% for js in plugin_js %}
+    <script type="text/javascript" src="/static/plugins/{{ js }}"></script>
+    {% endfor %}{% for css in plugin_css %}
+    <link href="/static/plugins/{{ css }}" rel="stylesheet">
+    {% endfor %}
 
   </head>
 
 
-  <body class="dw {{ pageClass }} {{ language }}">
+  <body class="dw {{ pageClass }} {{ language }}" data-locale="{{ locale }}">
 
+
+    {% if not noHeader %}
+
+    <header class="header">
+      {% use "login.twig" %}
+      {{ block('login') }}
+
+      {% use "header.twig" %}
+      {{ block('header') }}
+    </header>
+
+    {% endif %}
 
     <div class="container">
 
-      <header class="header">
-        <div class="row topnav">
-            <!--<div class="span3">
-              <div class="dw-logo-type dw-logo"><i class="wrap">[&nbsp;</i><a href="/">Datawrapper</a><i class="wrap">&nbsp;]</i></div>
-              <div class="dw-logo-sub">{% trans "Open Source Data Visualization" %}</div>
-            </div>-->
 
-            {% use "login.twig" %}
-            {{ block('login') }}
-
-            {% use "header.twig" %}
-            {{ block('header') }}
-        </div>
-
-      </header>
 
     <!--[if lt IE 9]>
     <div style="position:relative">
@@ -79,23 +96,58 @@
       {{ block('content') }}
 
 
+    {% if not noFooter %}
       <footer class="footer">
 
         <p class="pull-right" style="text-align:right">
           <a href="#top">{% trans "Back to top" %}</a>
-          <span class="version">version {{ DW_VERSION }} {{ BRANCH }}</span>
+          <span class="version">version <a href="https://github.com/datawrapper/datawrapper/blob/master/CHANGELOG.md#{{ DW_VERSION | replace({ '.': '' }) }}">{{ DW_VERSION }}</a> {{ BRANCH | raw }}</span>
         </p>
 
-        <p>{% trans %}
-          {# Datawrapper is an <a href="http://github.com/datawrapper/datawrapper">open source</a> project by <a href="http://abzv.de">ABZV</a> - a German training institution for newspaper journalists. #}
-          {% endtrans %}
+        <p>
+          {% if footer %}
+            {% for line in footer %}
+              {% include (line) %}
+            {% endfor %}
+          {% else %}
+            {% trans %}
+                Datawrapper @ The Washington Post is a custom version of the original <a href="http://github.com/datawrapper/datawrapper">open source datawrapper project</a>.
+            {% endtrans %}
+          {% endif %}
         </p>
+        {% if config.footer_links %}
         <div class="footer-links">
-            <a href="http://docs.datawrapper.de/{{ language }}/quickstart">{% trans "Quick Start" %}</a> – <a href="http://docs.datawrapper.de/{{ language }}/tutorial">{% trans "Tutorial" %}</a>.
+          {% for link in config.footer_links %}
+            <a href="{{ link.url | replace({'%lang': language }) }}">{{ link.title[language] }}</a>
+          {% endfor %}
         </div>
+        {% endif %}
       </footer>
+    {% endif %}
 
+    </div>
 
+    <div id="alertModal" class="modal hide">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <div class="bg">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"> <path id="light-bulb-18-icon" d="M292.2,381.263h-72.511c-5.082,0-9.201,4.12-9.201,9.203c0,5.082,4.119,9.201,9.201,9.201H292.2
+c5.083,0,9.202-4.119,9.202-9.201C301.402,385.383,297.283,381.263,292.2,381.263z M290.546,411.9h-69.201
+c-5.082,0-9.201,4.121-9.201,9.202c0,5.083,4.119,9.202,9.201,9.202h69.201c5.082,0,9.201-4.119,9.201-9.202
+C299.747,416.021,295.628,411.9,290.546,411.9z M221.82,442.111C239.735,458.673,241.58,462,248.731,462h13.774
+c6.99,0,8.714-3.084,27.564-19.889H221.82z M360.699,221.629c0,62.305-53.581,97.22-53.581,146.388h-24.4
+c0.021-60.599,53.142-92.516,53.142-146.388c0-100.84-159.828-100.998-159.828,0c0,53.823,52.2,84.366,53.409,146.388h-24.668
+c0-49.168-53.581-84.083-53.581-146.388C151.191,87.725,360.699,87.589,360.699,221.629z M269.203,95.112H244.14V50h25.063V95.112z
+M355.264,73.97L333.18,62.12l-22.056,41.103l22.085,11.85L355.264,73.97z M419.355,136.042l-14.599-20.372l-40.099,28.739
+l14.598,20.371L419.355,136.042z M423.781,294.141l-45.115-18.278l-9.409,23.229l45.116,18.277L423.781,294.141z M438.789,205.555
+h-51.125v25.062h51.125V205.555z M200.876,103.223L178.82,62.12l-22.084,11.85l22.055,41.103L200.876,103.223z M147.344,144.409
+l-40.101-28.739l-14.599,20.372l40.1,28.738L147.344,144.409z M143.178,296.9L132.9,274.043l-45.116,20.283l10.276,22.857
+L143.178,296.9z M124.338,205.555H73.211v25.062h51.127V205.555z"></path> </svg>
+        </div>
+        <div class="message"></div>
+        <div class="buttons">
+        </div>
+      </div>
     </div>
 
     <!-- Le javascript
@@ -103,21 +155,17 @@
     <!-- Placed at the end of the document so the pages load faster -->
 
     <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap-modal.js"></script>
-    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap-modal-xhr.js"></script>
-    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap-transition.js"></script>
-    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap-collapse.js"></script>
     <script type="text/javascript">
 
 $(function() {
-  Datawrapper.Core.initialize();
-  DW.__chartCacheDomain = '{{ DW_CHART_CACHE_DOMAIN }}';
-  DW.__domain = '{{ DW_DOMAIN }}';
+  dw.backend.__chartCacheDomain = '{{ DW_CHART_CACHE_DOMAIN }}';
+  dw.backend.__domain = '{{ DW_DOMAIN }}';
+  dw.backend.__asset_domain = '{{ ASSET_DOMAIN }}';
 });
     </script>
     {% use "messages.twig" %}
     {{ block('messages') }}
 
-    {{ trackingCode | raw }}
+    {{ hook('after_core_body') }}
   </body>
 </html>

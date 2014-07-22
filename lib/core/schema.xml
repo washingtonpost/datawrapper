@@ -2,6 +2,9 @@
 <database name="datawrapper" defaultIdMethod="native">
 
   <table name="chart" phpName="Chart">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="id" type="varchar" size="5" required="true" primaryKey="true" />
     <column name="title" type="varchar" size="255" required="true" />
     <column name="theme" type="varchar" size="255" required="true" />
@@ -11,7 +14,7 @@
     <column name="metadata" type="varchar" size="4096" required="true" />
     <column name="deleted" type="boolean" default="false" />
     <column name="deleted_at" type="timestamp" />
-    <column name="author_id" type="integer" required="true"/>
+    <column name="author_id" type="integer" required="false"/>
     <foreign-key foreignTable="user">
       <reference local="author_id" foreign="id"/>
     </foreign-key>
@@ -20,15 +23,28 @@
     <column name="guest_session" type="varchar" />
     <column name="last_edit_step" type="integer" default="0" />
     <column name="published_at" type="timestamp" />
+    <column name="public_url" type="varchar" />
+    <column name="public_version" type="integer" default="0" />
+    <column name="organization_id" type="varchar" size="128" required="false" />
+    <foreign-key foreignTable="organization">
+      <reference local="organization_id" foreign="id"/>
+    </foreign-key>
+    <column name="forked_from" type="varchar" size="5" required="false" />
+    <foreign-key foreignTable="chart">
+      <reference local="forked_from" foreign="id"/>
+    </foreign-key>
   </table>
 
   <table name="user" phpName="User">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
     <column name="email" type="varchar" size="512" required="true" />
     <column name="pwd" type="varchar" size="512" required="true" />
     <column name="activate_token" type="varchar" size="512" required="false" />
     <column name="reset_password_token" type="varchar" size="512" required="false" />
-    <column name="role" type="enum" valueSet="admin,editor,pending,guest" required="true" default="pending" />
+    <column name="role" type="enum" valueSet="admin,editor,pending,guest,sysadmin,graphic-editor" required="true" default="pending" />
     <column name="deleted" type="boolean" default="false" />
     <column name="language" type="varchar" size="5" default="en" />
     <column name="created_at" type="timestamp" required="true" />
@@ -36,10 +52,38 @@
     <column name="name" type="varchar" required="false" size="512" />
     <column name="website" type="varchar" required="false" size="512" />
     <column name="sm_profile" type="varchar" required="false" size="512" />
+    <column name="oauth_signin" type="varchar" required="false" size="512" phpName="OAuthSignIn" />
+  </table>
+
+  <!-- organizations -->
+  <table name="organization" phpName="Organization">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <column name="id" type="varchar" size="128" required="true" primaryKey="true" />
+    <column name="name" type="varchar" size="512" required="true" />
+    <column name="created_at" type="timestamp" required="true" />
+    <column name="deleted" type="boolean" default="false" />
+  </table>
+
+  <!-- cross reference user - organization -->
+  <table name="user_organization" isCrossRef="true">
+    <column name="user_id" type="integer" primaryKey="true" />
+    <column name="organization_id" type="varchar" size="128" primaryKey="true" />
+    <column name="organization_role" type="enum" valueSet="admin,member" required="true" default="member" />
+    <foreign-key foreignTable="user">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="organization">
+      <reference local="organization_id" foreign="id"/>
+    </foreign-key>
   </table>
 
   <!-- store security relevant user actions in this table -->
   <table name="action" phpName="Action">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
     <column name="user_id" type="integer" required="true"/>
     <foreign-key foreignTable="user">
@@ -52,6 +96,9 @@
 
   <!-- some stats to keep admins happy -->
   <table name="stats" phpName="Stats">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
     <column name="time" type="timestamp" required="true" />
     <column name="metric" type="varchar" required="true" />
@@ -60,6 +107,9 @@
 
   <!-- user sessions -->
   <table name="session" phpName="Session">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="session_id" type="varchar" size="32" required="true" primaryKey="true" />
     <column name="date_created" type="timestamp" required="true" />
     <column name="last_updated" type="timestamp" required="true" />
@@ -68,6 +118,9 @@
 
   <!-- chart export job queue -->
   <table name="job" phpName="Job">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
     <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
     <column name="user_id" type="integer" required="true"/>
     <foreign-key foreignTable="user">
@@ -77,10 +130,49 @@
     <foreign-key foreignTable="chart">
       <reference local="chart_id" foreign="id"/>
     </foreign-key>
-    <column name="status" type="enum" valueSet="queued,done" required="true" default="queued" />
+    <column name="status" type="enum" valueSet="queued,done,failed,canceled" required="true" default="queued" />
     <column name="created_at" type="timestamp" required="true" />
     <column name="done_at" type="timestamp" required="true" />
     <column name="type" type="varchar" size="32" required="true" />
     <column name="parameter" type="varchar" size="4096" required="true" />
+    <column name="fail_reason" type="varchar" size="4096" required="true" />
+  </table>
+
+  <!-- plugin -->
+  <table name="plugin" phpName="Plugin">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <column name="id" type="varchar" size="128" required="true" primaryKey="true" />
+    <column name="installed_at" type="timestamp" required="true" />
+    <column name="enabled" type="boolean" default="false" />
+    <column name="is_private" type="boolean" default="false" />
+  </table>
+
+  <!-- cross reference table to define plugins available to each organization -->
+  <table name="plugin_organization" isCrossRef="true">
+    <column name="plugin_id" type="varchar" size="128" primaryKey="true" />
+    <column name="organization_id" type="varchar" size="128" primaryKey="true" />
+    <foreign-key foreignTable="plugin">
+      <reference local="plugin_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="organization">
+      <reference local="organization_id" foreign="id"/>
+    </foreign-key>
+  </table>
+
+  <!-- plugin data -->
+  <table name="plugin_data" phpName="PluginData">
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="plugin_id" type="varchar" size="128" required="true" />
+    <foreign-key foreignTable="plugin">
+      <reference local="plugin_id" foreign="id"/>
+    </foreign-key>
+    <column name="stored_at" type="timestamp" required="true" />
+    <column name="key" type="varchar" size="128" required="true" />
+    <column name="data" type="varchar" size="4096" />
   </table>
 </database>

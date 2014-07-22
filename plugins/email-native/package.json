@@ -1,0 +1,7 @@
+{
+    "name": "email-native",
+	"version": "0.1",
+	"author": "Edouard Richard",
+	"createdAt": "2013-06-09",
+    "description": "The default plugin for sending out emails to our users. It's a plugin b/c on some servers a different mailing system might be needed. Not a good idea to disable."
+}

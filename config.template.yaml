@@ -1,24 +1,76 @@
 # Datawrapper configuration
 #
 
-domain: datawrapper.de
-chart_domain: c.datawrapper.de
+domain: datawrapper
+chart_domain: c.datawrapper
+# asset_domain: ...
+
+## the following keys are used to hash passwords.
+##
+## auth_salt is used to hash passwords before sending via HTTP.
+## secure_auth_key is used to hash passwords again before
+## storing them in the database.
+##
+## Please change these keys on initial setup of Datawrapper.
+## If you change them later no user will be able to login
+## with their former passwords.
+# auth_salt: "MY_AUTH_SALT"
+# secure_auth_key: "MY_SECRET_AUTH_KEY"
+
 
 ## show debug message?
 debug: true
 
 ## some default values
-default_theme: default
-default_vis: bar-chart
+defaults:
+  show_in_gallery: true
+  theme: default
+  vis: bar-chart
 
 ## thumbnail sizes [width, height]
 thumbnails:
     s: [150, 150]
     m: [260, 170]
 
-## email address for admin
-admin_email: hello@datawrapper.de
-log_email: debug@datawrapper.de
+## email addresses
+email:
+  # users with problems will be shown the support email
+  support: hello@datawrapper.de
+  # error messages will go here
+  log: debug@datawrapper.de
+
+## prevent guest from creating charts
+prevent_guest_charts: false
+
+## prevent guests from creating accounts
+## (admin needs to create any accounts)
+prevent_guest_access: false
+
+## prevent account settings access
+prevent_settings_access: false
+
+## the following links are shown in the footer
+## please link to your own imprint (and not ours)
+footer_links:
+    - title:
+        en: Quick Start
+        de: Schnellstart
+      url: http://docs.datawrapper.de/%lang/quickstart
+    - title:
+        en: Tutorial
+        de: Tutorial
+      url: http://docs.datawrapper.de/%lang/tutorial
+
+## base url of shared assets hosted on CDN
+## this URL is where Datawrapper charts will access some third-party
+## libraries such as globalize.js.
+# asset_domain: assets-datawrapper.s3.amazonaws.com
+
+## to use a custom home page in your installation
+## uncomment the following setting and create a new
+## Twig template (e.g. my-home.twig) in /templates/custom/
+# custom_home: my-home
+
 
 ## HTTP AUTH (optional)
 ## edit and uncomment if Datawrapper is locked behind HTTP Auth
@@ -38,25 +90,16 @@ log_email: debug@datawrapper.de
 #     icon: tag
 
 
-## ANALYTICS (optional)
-## configure analytics module, e.g. Piwik
-# analytics:
-#     type: Piwik
-#     config:
-#         url: piwik.datawrapper.de  # without http:// and trailing slash
-#         idSite: 5
+plugins:
 
+  # analytics-piwik:
+  #   url: piwik.datawrapper.de  # without http:// and trailing slash
+  #   idSite: 5
 
-## PUBLISH (optional)
-## configure CDN publication module, e.g. Amazon S3
-# publish:
-#     type: S3
-#     requires:
-#       - vendor/s3/S3.php
-#     config:
-#         accesskey: YOUR_ACCESS_KEY
-#         secretkey: YOUR_SECRET_KEY
-#         bucket: your-bucket
+  # publish-s3:
+  #   accesskey: YOUR_ACCESS_KEY
+  #   secretkey: YOUR_SECRET_KEY
+  #   bucket: your-bucket
 
 
 ## PHANTOMJS (optional)
