@@ -19,36 +19,38 @@ class ChartQuery extends BaseChartQuery {
      * creates a new empty chart
      */
     public function createEmptyChart($user) {
+        $cfg = $GLOBALS['dw_config'];
+        $defaults = isset($cfg['defaults']) ? $cfg['defaults'] : array();
+
         $chart = new Chart();
         $chart->setId($this->getUnusedRandomId());
         $chart->setCreatedAt(time());
         $chart->setLastModifiedAt(time());
         if ($user->isLoggedIn()) {
             $chart->setAuthorId($user->getId());
+            $org = $user->getCurrentOrganization();
+            if (!empty($org)) $chart->setOrganization($org);
         } else {
             // remember session id to be able to assign this chart
             // to a newly registered user
             $chart->setGuestSession(session_id());
         }
         // find a nice, more or less unique title
-        $untitled = _('Untitled');
-        $title = '[' . $untitled;
-        $untitledCharts = $this->filterByAuthorId($user->getId())
-            ->filterByTitle('['.$untitled.'%')
-            ->filterByDeleted(false)
-            ->find();
-        if (count($untitledCharts) > 0) $title .= '-'.count($untitledCharts);
-        $chart->setTitle($title . ']');
+        $untitled = __('Insert title here');
+        $title = '[ ' . $untitled . ' ]';
+        $chart->setTitle($title);
 
         // todo: use global default theme
-        $chart->setTheme(isset($GLOBALS['dw_config']['default_theme']) ? $GLOBALS['dw_config']['default_theme'] : 'default');
+        $chart->setTheme(isset($defaults['theme']) ? $defaults['theme'] : 'default');
         $chart->setLocale(''); // no default locale
-        $chart->setType(isset($GLOBALS['dw_config']['default_vis']) ? $GLOBALS['dw_config']['default_vis'] : 'bar-chart');
+        $chart->setType(isset($defaults['vis']) ? $defaults['vis'] : 'bar-chart');
+        $chart->setPublicUrl($chart->getLocalUrl());
 
         $defaultMeta = Chart::defaultMetaData();
 
         $chart->setMetadata(json_encode($defaultMeta));
         // $chart->setLanguage($user->getLanguage());  // defaults to user language
+        $chart->setShowInGallery(isset($defaults['show_in_gallery']) ? $defaults['show_in_gallery'] : false);
         $chart->save();
         return $chart;
     }
@@ -69,13 +71,15 @@ class ChartQuery extends BaseChartQuery {
         $chart->setId($this->getUnusedRandomId());
         // but the rest remains the same
         $chart->setUser($src->getUser());
-        $chart->setTitle($src->getTitle().' ('._('Copy').')');
+        $chart->setTitle($src->getTitle().' ('.__('Copy').')');
         $chart->setMetadata(json_encode($src->getMetadata()));
         $chart->setTheme($src->getTheme());
         $chart->setLocale($src->getLocale());
         $chart->setType($src->getType());
         $chart->setCreatedAt(time());
         $chart->setLastModifiedAt(time());
+        $chart->setForkedFrom($src->getId());
+        $chart->setOrganization($src->getOrganization());
 
         $chart->setLastEditStep(3);
 
@@ -117,6 +121,17 @@ class ChartQuery extends BaseChartQuery {
                 if ($key == 'layout' || $key == 'theme') $query->filterByTheme($val);
                 if ($key == 'vis') $query->filterByType($val);
                 if ($key == 'month') $query->filterByCreatedAt(array('min' => $val.'-01', 'max' => $val.'-31'));
+                if ($key == 'q') {
+                    $query->condition('in-title', 'Chart.Title LIKE ?', '%'.$val.'%');
+                    $query->condition('in-intro', 'Chart.Metadata LIKE ?', '%"intro":"%'.$val.'%"%');
+                    $query->condition('in-source', 'Chart.Metadata LIKE ?', '%"source-name":"%'.$val.'%"%');
+                    $query->condition('in-source-url', 'Chart.Metadata LIKE ?', '%"source-url":"%'.$val.'%"%');
+                    $query->where(array('in-title', 'in-intro', 'in-source', 'in-source-url'), 'or');
+                }
+                if ($key == 'status') {
+                    if ($val == 'published') $query->filterByLastEditStep(array('min' => 4));
+                    else if ($val == 'draft') $query->filterByLastEditStep(array('max'=> 3));
+                }
             }
         }
         return $query;
@@ -150,6 +165,7 @@ class ChartQuery extends BaseChartQuery {
 
     private function galleryChartsQuery($filter) {
         $query = $this->filterByShowInGallery(true)
+            ->filterByLastEditStep(array('min' => 4))
             ->filterByDeleted(false)
             ->orderByCreatedAt('desc');
         foreach ($filter as $key => $val) {

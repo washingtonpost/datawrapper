@@ -27,7 +27,6 @@ $app->put('/account/lang', function() use ($app) {
 $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
     // First, check username against LDAP
-
     $user = $payload->user;
     $ds=ldap_connect("ldaptc.twpn.root.washpost.com");
     try {
@@ -48,9 +47,8 @@ $app->post('/auth/login', function() use($app) {
             DatawrapperSession::login($user, $payload->keeplogin == true);
             ok();
         }
-
     } catch (Exception $e) {
-        error('login-invalid', _('The login information is incorrect.'));
+        error('login-invalid', __('Invalid login.'));
     }
 
 
@@ -71,8 +69,7 @@ $app->post('/auth/login', function() use($app) {
 
 /* return the server salt for secure auth */
 $app->get('/auth/salt', function() use ($app) {
-    $salt = DW_AUTH_SALT;
-    ok(array('salt' => $salt, 'time' => time()));
+    ok(array('salt' => DW_AUTH_SALT));
 });
 
 /*
@@ -101,12 +98,12 @@ $app->post('/account/reset-password', function() use($app) {
 
         $curToken = $user->getResetPasswordToken();
         if (!empty($curToken)) {
-            error('password-already-reset', _('The password reset email has already been sent. Please contact an <a href="mailto:hello@datawrapper.de">administrator</a>.'));
+            error('password-already-reset', __('The password reset email has already been sent. Please contact an <a href="mailto:hello@datawrapper.de">administrator</a>.'));
             return;
         }
 
         if ($user->getRole() == 'pending') {
-            error('account-not-activated', _('You haven\'t activated this email address yet, so we cannot safely send emails to it. Please contact an <a href="mailto:hello@datawrapper.de">administrator</a>.'));
+            error('account-not-activated', __('You haven\'t activated this email address yet, so we cannot safely send emails to it. Please contact an <a href="mailto:hello@datawrapper.de">administrator</a>.'));
             return;
         }
 
@@ -116,15 +113,25 @@ $app->post('/account/reset-password', function() use($app) {
         $user->setResetPasswordToken($token);
         $user->save();
 
-        $name = $user->getEmail();
-        $passwordResetLink = 'http://' . $GLOBALS['dw_config']['domain'] . '/account/reset-password/' . $token;
-        $from = 'password-reset@' . $GLOBALS['dw_config']['domain'];
-        include('../../lib/templates/password-reset-email.php');
-        mail($user->getEmail(), 'Datawrapper Password Reset', $password_reset_mail, 'From: ' . $from);
-        ok(_('You should soon receive an email with further instructions.'));
+        $protocol = !empty($_SERVER['HTTPS']) ? "https" : "http";
+        $passwordResetLink = $protocol . '://' . $GLOBALS['dw_config']['domain'] . '/account/reset-password/' . $token;
+
+        include(ROOT_PATH . 'lib/templates/password-reset-email.php');
+
+        dw_send_support_email(
+            $user->getEmail(),
+            __('Datawrapper: You requested a reset of your password'),
+            $password_reset_mail,
+            array(
+                'name' => $user->guessName(),
+                'password_reset_link' => $passwordResetLink
+            )
+        );
+
+        ok(__('You should soon receive an email with further instructions.'));
 
     } else {
-        error('login-email-unknown', _('The email is not registered yet.'));
+        error('login-email-unknown', __('The email is not registered yet.'));
     }
 });
 
@@ -143,7 +150,7 @@ $app->post('/account/resend-activation', function() use($app) {
             ->filterByKey('resend-activation')
             ->find();
         if (count($r) > 2) {
-            error('avoid-spam', str_replace('%ADMINEMAIL%', $GLOBALS['dw_config']['admin_email'], _('You already resent the activation mail three times, now. Please <a href="mailto:%ADMINEMAIL%">contact an administrator</a> to proceed with your account activation.')));
+            error('avoid-spam', str_replace('%support_email%', $GLOBALS['dw_config']['email']['support'], __('You already resent the activation mail three times, now. Please <a href="mailto:%support_email%">contact an administrator</a> to proceed with your account activation.')));
             return false;
         }
 
@@ -151,18 +158,95 @@ $app->post('/account/resend-activation', function() use($app) {
         Action::logAction($user, 'resend-activation', $token);
 
         // send email with activation key
-        $name = $user->getEmail();
-        $domain = $GLOBALS['dw_config']['domain'];
-        $activationLink = 'http://' . $domain . '/account/activate/' . $token;
-        $from = 'activate@' . $domain;
+        $domain   = $GLOBALS['dw_config']['domain'];
+        $protocol = !empty($_SERVER['HTTPS']) ? "https" : "http";
+        $activationLink = $protocol . '://' . $domain . '/account/activate/' . $token;
 
-        include('../../lib/templates/activation-email.php');
+        include(ROOT_PATH . 'lib/templates/activation-email.php');
 
-        mail($user->getEmail(), 'Datawrapper Email Activation', $activation_mail, 'From: ' . $from);
+        dw_send_support_email(
+            $user->getEmail(),
+            __('Datawrapper: Please activate your email address'),
+            $activation_mail,
+            array(
+                'name' => $user->guessName(),
+                'activation_link' => $activationLink
+            )
+        );
 
-        ok(_('The activation email has been send to your email address, again.'));
+        ok(__('The activation email has been send to your email address, again.'));
 
     } else {
-        error('token-empty', _('You\'re account is probably already activated.'));
+        error('token-empty', __('You\'re account is probably already activated.'));
+    }
+});
+
+/*
+ * endpoint for sending a new invitation to a user
+ *
+ * expects payload { "email": "validemail@domain.tld" }
+ */
+$app->post('/account/resend-invitation', function() use($app) {
+    $payload = json_decode($app->request()->getBody());
+    $user    = UserQuery::create()->findOneByEmail($payload->email);
+    $token   = $user->getActivateToken();
+    if (!empty($user)) {
+        if (empty($token)) {
+            return error("token-invalid", _("This activation token is invalid. Your email address is probably already activated."));
+        }
+        // variables for `templates/invitation-email.php` 
+        $domain         = $GLOBALS['dw_config']['domain'];
+        $protocol       = !empty($_SERVER['HTTPS']) ? "https" : "http";
+        $invitationLink = $protocol . '://' . $domain . '/account/invite/' . $token;
+        $name           = $user->getEmail();
+        include('../../lib/templates/invitation-email.php');
+        $from           = $GLOBALS['dw_config']['email']['invite'];
+
+        dw_send_support_email(
+            $user->getEmail(),
+            __('You have been invited to Datawrapper!'),
+            $invitation_mail,
+            array(
+                'name' => $user->guessName(),
+                'invitation_link' => $invitationLink
+            )
+        );
+        ok(__('You should soon receive an email with further instructions.'));
+    } else {
+        error('login-email-unknown', __('The email is not registered yet.'));
+    }
+});
+
+/*
+ * endpoint for validating an invitation. The user sends his new password
+ */
+$app->post('/account/invitation/:token', function ($token) use ($app) {
+    $data = json_decode($app->request()->getBody());
+    if (!empty($token)) {
+        $users = UserQuery::create()
+          ->filterByActivateToken($token)
+          ->find();
+        if (count($users) != 1) {
+            error("token-invalid", _("This activation token is invalid. Your email address is probably already activated."));
+        } elseif (empty($data->pwd1)) {
+            error("password-missing", _("You must enter a password."));
+        } elseif ($data->pwd1 != $data->pwd2) {
+            error("password-mismatch", _("Both passwords must be the same."));
+        } else {
+            $user = $users[0];
+            $user->setActivateToken('');
+            $user->setPwd($data->pwd1);
+            $user->save();
+            // NOTE: we don't need a confirmation.
+            # send confirmation email
+            // $name   = $user->getEmail();
+            // $domain = $GLOBALS['dw_config']['domain'];
+            // $from   = $GLOBALS['dw_config']['email'];
+            // $link = 'http://' . $domain;
+            // include('../../lib/templates/confirmation-email.php');
+            // mail($name, _('Confirmation of account creation') . ' ' . $domain, $confirmation_email, 'From: ' . $from);
+            DatawrapperSession::login($user);
+            ok();
+        }
     }
 });

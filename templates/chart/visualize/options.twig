@@ -1,0 +1,28 @@
+
+<fieldset id="visOptions">
+
+    {% if vis.dimensions == 1 %}
+    <div class="control-group select-row">
+        <label class="control-label" for="text-title">{% trans "Initial row to display" %}</label>
+        <div class="controls">
+            <select id="select-row" style="width:100%">
+            </select>
+        </div>
+    </div>
+    {% endif %}
+
+    {% for key, option in vis.options %}
+        {% if theme['option-filter'][vis.id][key] or (not option.hidden and not option.expert)  %}
+    <div class="control-group vis-option-group vis-option-type-{{ option.type }}" style="margin-bottom:0" id="vis-options-{{ key }}">
+
+        {% if option.help %}
+            <a title="{{ option.help }}" class="vis-option-help"><span>?</span></a>
+        {% endif %}
+
+        {{ hook('vis_option_controls', option, key) }}
+
+    </div>
+    {% endif %}{% endfor %}
+
+</fieldset>
+

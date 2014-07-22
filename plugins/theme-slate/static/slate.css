@@ -1,0 +1,199 @@
+.chart .chartMenu a {
+    color: #fff;
+}
+
+/*
+ * Noir Theme
+ * ----------
+ *
+ * based on http://bootswatch.com/slate/
+ */
+
+body.chart {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    margin:5px 10px;
+    font-size: 13px;
+    line-height: 18px;
+    background: #272B30;
+    overflow: visible;
+    overflow-x:hidden;
+    color: #9ab;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 15px;
+    text-align: left;
+}
+
+.chart p { margin: 15px 0; line-height: 19px;}
+
+#chart {
+    margin-top: 25px;
+}
+
+.label span {
+    font-size: 12px;
+    color: #9ab;
+}
+
+.line-chart .label span {
+    background: #272B30!important;
+}
+
+html .line-chart .label.tooltip span {
+    background: none!important;
+}
+
+html .line-chart .label.tooltip.inverted span {
+    color: #fff!important;
+}
+
+.label.highlighted, .label.axis {
+    font-size: 12px;
+    z-index: 100;
+}
+
+.label.hover {
+    font-weight: bold;
+}
+
+.pie-chart .label.hover span,
+.donut-chart .label.hover span {
+    color: #fff;
+}
+
+.label.inverted span {
+    color: #000!important;
+}
+
+.label.highlighted {
+    font-weight: bold;
+}
+
+.label.value span {
+    font-size: 12px;
+}
+
+.label.series span {
+    font-size: 12px;
+}
+
+
+.tooltip {
+    z-index: 200;
+    padding-bottom: 0px;
+}
+
+.tooltip .content {
+    background-color: #202328;
+    border: 1px solid #101214;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5) inset;
+    padding: 5px 8px;
+}
+
+.tooltip label {
+    font-weight: 700;
+}
+
+.tooltip label:after {
+    content: ": ";
+}
+
+#footer {
+    margin: 10px 0px 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.footer-left {
+    float: left;
+}
+.footer-right {
+    float: right;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+
+svg .axis, svg .tick, svg .grid, svg rect {
+    shape-rendering: crispEdges;
+}
+
+@media screen and (max-width: 400px) {
+    h1, #footer, p, .label {
+        display: none;
+        position: absolute;
+        height: 0;
+        width: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    #chart {
+        margin: 0;
+    }
+
+    body.chart { margin:0; padding: 0;}
+}
+
+.label.rotate90 {
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+.label.smaller span {
+    font-size: 80%;
+}
+
+.chart .chartMenu {
+    background: #272B30;
+    box-shadow: 0 0 5px #444;
+}
+
+.chart .chartMenu a {
+    color: #bbb;
+}
+
+.chart .chartMenu a:hover {
+    color: #fff;
+}
+
+
+.chart .icon-fullscreen { background-position: 0 -15px; }
+.chart .icon-share { background-position: -32px -15px; }
+.chart .icon-download { background-position: -17px -15px; }

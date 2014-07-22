@@ -1,4 +1,18 @@
 {
     "name": "datawrapper",
-    "version": "1.2.4"
+    "version": "1.7.9",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/datawrapper/datawrapper.git"
+    },
+    "jshintConfig": {
+        "globalstrict": false,
+        "globals": {
+            "dw": true,
+            "_": true,
+            "$": true,
+            "chroma": true,
+            "d3": true
+        }
+    }
 }

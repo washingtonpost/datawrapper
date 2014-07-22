@@ -7,7 +7,7 @@
 $app->get('/users', function() use ($app) {
     $user = DatawrapperSession::getUser();
     if ($user->isAdmin()) {
-        $users = UserQuery::create()->find();
+        $users = UserQuery::create()->filterByDeleted(false)->find();
         $res = array();
         foreach ($users as $user) {
             $res[] = $user->toArray();
@@ -41,14 +41,21 @@ function email_exists($email) {
  */
 $app->post('/users', function() use ($app) {
     $data = json_decode($app->request()->getBody());
-
+    $currUser = DatawrapperSession::getUser();
+    $invitation = empty($data->invitation)? false : (bool) $data->invitation;
+    // check values
     $checks = array(
-        'password-mismatch' => function($d) { return $d->pwd === $d->pwd2; },
-        'password-missing' => function($d) { return trim($d->pwd) != ''; },
         'email-missing' => function($d) { return trim($d->email) != ''; },
         'email-invalid' => function($d) { return check_email($d->email); },
         'email-already-exists' => function($d) { return !email_exists($d->email); },
     );
+    // if invitation is false: classic way, we check passwords
+    if (!$invitation) {
+        $checks = array_merge($checks, array(
+            'password-mismatch' => function($d) { return $d->pwd === $d->pwd2; },
+            'password-missing' => function($d) { return trim($d->pwd) != ''; },
+        ));
+    }
 
     foreach ($checks as $code => $check) {
         if (call_user_func($check, $data) == false) {
@@ -61,29 +68,65 @@ $app->post('/users', function() use ($app) {
     $user = new User();
     $user->setCreatedAt(time());
     $user->setEmail($data->email);
-    $user->setPwd($data->pwd);
+
+    if (!$invitation) {
+        $user->setPwd($data->pwd);
+    }
+    if ($currUser->isAdmin() && !empty($data->role)) {
+        // Only sysadmin can set a sysadmin role
+        if ($data->role == "sysadmin"){
+            if (!$currUser->isSysAdmin()) {
+                error(403, 'Permission denied');
+                return;
+            }
+        }
+        $user->SetRole($data->role);
+    }
     $user->setLanguage(DatawrapperSession::getLanguage());
-    $user->setActivateToken(hash_hmac('sha256', $data->email.'/'.$data->pwd.time(), DW_TOKEN_SALT));
+    $user->setActivateToken(hash_hmac('sha256', $data->email.'/'.time(), DW_TOKEN_SALT));
     $user->save();
     $result = $user->toArray();
 
-    // send email with activation key
-    $name = $data->email;
-    $domain = $GLOBALS['dw_config']['domain'];
-    $activationLink = 'http://' . $domain . '/account/activate/' . $user->getActivateToken();
-    $from = 'activate@' . $domain;
+    DatawrapperHooks::execute(DatawrapperHooks::USER_SIGNUP, $user);
 
-    include('../../lib/templates/activation-email.php');
+    // send an email
+    $name     = $data->email;
+    $domain   = $GLOBALS['dw_config']['domain'];
+    $protocol = !empty($_SERVER['HTTPS']) ? "https" : "http";
+    if ($invitation) {
+        // send account invitation link
+        $invitationLink = $protocol . '://' . $domain . '/account/invite/' . $user->getActivateToken();
+        include(ROOT_PATH . 'lib/templates/invitation-email.php');
+        dw_send_support_email(
+            $data->email,
+            sprintf(__('You have been invited to Datawrapper on %s'), $domain),
+            $invitation_mail,
+            array(
+                'name' => $user->guessName(),
+                'invitation_link' => $invitationLink
+            )
+        );
 
-    mail($data->email, 'Datawrapper Email Activation', $activation_mail, 'From: ' . $from);
+    } else {
+        // send account activation link
+        $activationLink = $protocol . '://' . $domain . '/account/activate/' . $user->getActivateToken();
+        include(ROOT_PATH . 'lib/templates/activation-email.php');
+        dw_send_support_email(
+            $data->email,
+            __('Datawrapper: Please activate your email address'),
+            $activation_mail,
+            array(
+                'name' => $user->guessName(),
+                'activation_link' => $activationLink
+            )
+        );
 
-
-    // we don't need to annoy the user with a login form now,
-    // so just log in..
-    DatawrapperSession::login($user);
+        // we don't need to annoy the user with a login form now,
+        // so just log in..
+        DatawrapperSession::login($user);
+    }
 
     ok($result);
-
 });
 
 
@@ -103,57 +146,93 @@ $app->put('/users/:id', function($user_id) use ($app) {
         }
 
         if (!empty($user)) {
-            $changed = array();
+            $messages = array();
             $errors = array();
 
             if (!empty($payload->pwd)) {
                 // update password
-                $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
                 $chk = false;
                 if (!empty($payload->oldpwhash)) {
-                    $chk = $hash === $payload->oldpwhash;
+                    $chk = $user->getPwd() === secure_password($payload->oldpwhash);
                 }
-                if ($chk || $curUser->isAdmin()) {
+                if ($chk || $curUser->isSysAdmin()) {
                     $user->setPwd($payload->pwd);
-                    $changed[] = 'password';
+                    Action::logAction($curUser, 'change-password', array('user' => $user->getId()));
                 } else {
-                    $errors[] = 'password-or-token-invalid';
+                    Action::logAction($curUser, 'change-password-failed', array('user' => $user->getId(), 'reason' => 'old password is wrong'));
+                    $errors[] = __('The password could not be changed because your old password was not entered correctly.');
                 }
             }
 
-            if (!empty($payload->email)) {
-                if (check_email($payload->email)) {
+            if (!empty($payload->email) && $payload->email != $user->getEmail()) {
+                if (check_email($payload->email) || $curUser->isAdmin()) {
                     if (!email_exists($payload->email)) {
-                        $user->setEmail($payload->email);
-                        $changed[] = 'email';
+                        if ($curUser->isAdmin()) {
+                            $user->setEmail($payload->email);
+                        } else {
+                            // non-admins need to confirm new emails addresses
+                            $token = hash_hmac('sha256', $user->getEmail().'/'.$payload->email.'/'.time(), DW_TOKEN_SALT);
+                            $token_link = 'http://' . $GLOBALS['dw_config']['domain'] . '/account/settings?token='.$token;
+                            // send email with token
+                            require(ROOT_PATH . 'lib/templates/email-change-email.php');
+
+                            dw_send_support_email(
+                                $payload->email,
+                                __('Datawrapper: You requested a change of your email address'),
+                                $email_change_mail,
+                                array(
+                                    'name' => $user->guessName(),
+                                    'email_change_token_link' => $token_link,
+                                    'old_email' => $user->getEmail(),
+                                    'new_email' => $payload->email
+                                )
+                            );
+                            // log action for later confirmation
+                            Action::logAction($curUser, 'email-change-request', array(
+                                'old-email' => $user->getEmail(),
+                                'new-email' => $payload->email,
+                                'token' => $token
+                            ));
+                            $messages[] = __('To complete the change of your email address, you need to confirm that you have access to it. Therefor we sent an email with the confirmation link to your new address. Your new email will be set right after you clicked that link.');
+                        }
                     } else {
-                        $errors[] = 'email-already-exists';
+                        $errors[] = sprintf(__('The email address <b>%s</b> already exists.'), $payload->email);
                     }
                 } else {
-                    $errors[] = 'email-is-invalid';
+                    $errors[] = sprintf(__('The email address <b>%s</b> is invalid.'), $payload->email);
                 }
             }
 
             if (!empty($payload->name)) {
                 $user->setName($payload->name);
-                $changed[] = 'name';
+
+            }
+
+            if ($curUser->isAdmin() && !empty($payload->role)) {
+                // Only sysadmin can set a sysadmin role
+                if ($payload->role == "sysadmin"){
+                    if (!$curUser->isSysAdmin()) {
+                        error(403, 'Permission denied');
+                        return;
+                    }
+                }
+                $user->setRole($payload->role);
             }
 
             if (!empty($payload->website)) {
                 $user->setWebsite($payload->website);
-                $changed[] = 'website';
             }
 
             if (!empty($payload->profile)) {
                 $user->setSmProfile($payload->profile);
-                $changed[] = 'sm_profile';
             }
 
-            if (!empty($changed)) {
+            if ($user->isModified()) {
                 $user->save();
+                $messages[] = __('This just worked fine. Your profile has been updated.');
             }
 
-            ok(array('updated' => $changed, 'errors' => $errors));
+            ok(array('messages' => $messages, 'errors' => $errors));
         } else {
             error('user-not-found', 'no user found with that id');
         }
@@ -184,18 +263,21 @@ $app->delete('/users/:id', function($user_id) use ($app) {
             $user = $curUser;
         } else if ($curUser->isAdmin()) {
             $user = UserQuery::create()->findPK($user_id);
+            $pwd = $user->getPwd();
         }
         if (!empty($user)) {
             if ($user->getPwd() == $pwd) {
 
                 // Delete user
-                DatawrapperSession::logout();
+                if (!$curUser->isAdmin()) {
+                    DatawrapperSession::logout();
+                }
                 $user->erase();
 
                 ok();
             } else {
                 Action::logAction($user, 'delete-request-wrong-password', json_encode(get_user_ips()));
-                error('wrong-password', _('The password you entered is not correct.'));
+                error('wrong-password', __('The password you entered is not correct.'));
             }
         } else {
             error('user-not-found', 'no user found with that id');
@@ -212,16 +294,16 @@ $app->put('/account/reset-password', function() use ($app) {
         if (!empty($user)) {
             if (!empty($payload->pwd)) {
                 // update password
-                $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
                 $user->setPwd($payload->pwd);
                 $user->setResetPasswordToken('');
+                $user->setActivateToken('');
                 $user->save();
                 ok();
             } else {
-                error('empty-password', _('The password must not be empty.'));
+                error('empty-password', __('The password must not be empty.'));
             }
         } else {
-            error('invalid-token', _('The supplied token for password resetting is invalid.'));
+            error('invalid-token', __('The supplied token for password resetting is invalid.'));
         }
     }
 });

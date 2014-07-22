@@ -17,11 +17,20 @@
     </h1>
 </div>
 <div class="row">
+    <style type="text/css">
+.by-month li + li + li + li + li + li {
+    display: none;
+}
+    </style>
     <div class="span3 gallery-filter" >
+
+        <form method="get" action="">
+            <input name="q" class="search-query input-medium" type="text" placeholder="{% trans "Search" %}" value="{{ search_query }}" />
+        </form>
 
         <h3>{% trans "By Month" %}</h3>
 
-        <ul class="unstyled">
+        <ul class="unstyled by-month">
             {% for month in bymonth %}
             {% if key == 'month' and val == month.id %}
             <li class="active"><a href="{{ mycharts_base }}/"><i class="icon-check"></i> {{ month.name }} </a> ({{ month.count }}) </li>
@@ -56,9 +65,21 @@
             {% endfor %}
         </ul>
 
+        <h3>{% trans "By Status" %}</h3>
+        <ul class="unstyled">
+            {% for status in bystatus %}
+            {% if key == 'status' and val == status.id %}
+            <li class="active"><a href="{{ mycharts_base }}/"><i class="icon-check"></i> {{ status.name }} </a> ({{ status.count }}) </li>
+            {% else %}
+            <li><a href="{{ mycharts_base }}/by/status/{{ status.id }}">{{ status.name }}</a> ({{ status.count }})</li>
+            {% endif %}
+
+            {% endfor %}
+        </ul>
+
         {% if not user2 %}
 
-        <p class="well">{{ "Want to see what other users created using Datawrapper? Take a look in the <a href='%GALLERY%'>Gallery</a>!" | trans | replace({ '%GALLERY%': '/gallery' }) | raw }}</p>
+        {{ hook('mycharts_after_sidebar', chart, user) }}
 
         {% else %}
 
@@ -86,13 +107,13 @@
             {% for chart in charts %}
             <li class="span3 chart" data-id="{{ chart.id }}">
                 <div class="thumbnail">
-                    <a href="/chart/{{ chart.id }}/edit"><img src="{% if chart.hasPreview %}http://{{ DW_CHART_CACHE_DOMAIN }}/{{ chart.id }}/m.png{% else %}/static/img/nopreview.png{% endif %}" width="260" style="background:{{ chart.metadata.publish.background }}">
+                    <a href="/chart/{{ chart.id }}/edit"><img src="{% if chart.hasPreview %}//{{ DW_CHART_CACHE_DOMAIN }}/{{ chart.id }}/m.png{% else %}/static/img/nopreview.png{% endif %}" width="260" style="height:160px;background:{{ chart.metadata.publish.background }}">
 
                     {# <p class="pull-right">
                         <a href="#delete" class="delete" data-chart="{{ chart.id }}"><i class="icon-remove"></i></a>
                     </p> #}
 
-                     <h3 style="color:{% if chart.metadata.publish.text %}{{ chart.metadata.publish.text }}{% else %}#000{% endif %};text-shadow:1px 1px 3px {% if chart.metadata.publish.background %}{{ chart.metadata.publish.background }}{% else %}#fff{% endif %};">{{ chart.title }}</h3></a>
+                     <h3 style="color:{% if chart.metadata.publish.text %}{{ chart.metadata.publish.text }}{% else %}#000{% endif %};text-shadow:1px 1px 3px {% if chart.metadata.publish.background %}{{ chart.metadata.publish.background }}{% else %}#fff{% endif %};">{% if chart.title != '' %}{{ chart.title | replace({'<br/>': ' - '}) | striptags }}{% else %}{{ chart.id }}{% endif %}</h3></a>
                      <div class="btn-group">
                         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                           <i class="icon-wrench"></i>
@@ -136,8 +157,7 @@ $(function(){
    {% if user2 %}
     $('.thumbnail > a').click(function(e) {
         e.preventDefault();
-        console.log($(e.target).parents('.chart').data('id'));
-        DW.popupChart($(e.target).parents('.chart').data('id'), true);
+        dw.backend.popupChart($(e.target).parents('.chart').data('id'), true);
     });
 
     $('a.edit').click(function(e) {

@@ -2,6 +2,9 @@
 
 {% block content %}
 
+{% if noSettings %}
+    Settings have been disabled.
+{% else %}
 <div class="docs">
     <ul class="nav nav-pills pull-right">
         <li><a href="#-status">{% trans "Account Status" %}</a></li>
@@ -40,7 +43,7 @@
 
                         <li><i class="icon-chevron-right"></i> <a class="btn" href="#" id="resend-activation-link">{% trans "Re-send activation link" %}</a></li>
 
-                        <li><i class="icon-chevron-right"></i> {{ "Or, <a href='mailto:%ADMINMAIL%'>contact us</a> to find other ways to activate your account." | trans | replace({'%ADMINMAIL%': ADMIN_EMAIL }) | raw }}</li>
+                        <li><i class="icon-chevron-right"></i> {{ "Or, <a href='mailto:%support_email%'>contact us</a> to find other ways to activate your account." | trans | replace({'%support_email%': SUPPORT_EMAIL }) | raw }}</li>
                     </ul>
 
                 {% endif %}
@@ -60,12 +63,19 @@
             <div class="form-horizontal settings profile">
                 <fieldset>
 
-                    <div class="control-group">
+                    <div class="email control-group{% if new_email_confirmed %} success{% endif %}">
                         <label class="control-label" for="email">{% trans "E-Mail" %}</label>
                         <div class="controls">
-                            <input type="text" class="input-xlarge" id="email" value="{{ user.email }}">
-                            <p class="help-block">{% trans "This is the email address which you used to sign up." %}</p>
+                            <input type="email" class="input-xlarge" id="email" value="{{ user.email }}">
+                            <p class="help-block">
+                                {% if new_email_confirmed %}
+                                    {% trans "Your email address has been updated!" %}
+                                {% else %}
+                                    {% trans "This is the email address which you use as login and to which we send notification emails." %}
+                                {% endif %}
+                            </p>
                         </div>
+
                     </div>
 
                     <div class="control-group">
@@ -152,13 +162,13 @@
             <div class="form-horizontal">
                  <fieldset>
                      <div class="control-group">
-                        <label class="control-label" for="pwd2">{% trans "Are you sure?" %}</label>
+                        <label class="control-label" for="are-you-sure">{% trans "Are you sure?" %}</label>
                         <div class="controls">
                             <label class="checkbox" for="are-you-sure"><input type="checkbox" id="are-you-sure" /> {% trans "Yes, I really know what I'm doing" %}</label>
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="pwd2">{% trans "So then.." %}</label>
+                        <label class="control-label" for="delete-account">{% trans "So then.." %}</label>
                         <div class="controls">
                             <button class="btn btn-danger" id="delete-account">{% trans "Delete my account!" %}</button>
                         </div>
@@ -201,10 +211,11 @@
 
 $(function() {
 
+    var uid = '{{ api_user }}';
 
     $('#resend-activation-link').click(function(e) {
         e.preventDefault();
-        DW.resendActivationMail($(e.target).parent());
+        dw.backend.resendActivationMail($(e.target).parent());
     });
 
     // save profile
@@ -218,17 +229,22 @@ $(function() {
         };
         submit.addClass('loading');
         $.ajax({
-            url: '/api/users/current',
+            url: '/api/users/' + uid,
             type: 'PUT',
             dataType: 'json',
             data: JSON.stringify(payload),
             success: function(data) {
                 submit.removeClass('loading');
                 if (data.status == 'ok') {
-                    DW.logMessage('{% trans "This just worked fine. Your profile has been updated." %}', $('.settings.profile .control-group')[0]);
-                    $('.profile .reset').attr('disabled', true);
+                    _.each(data.data.messages, function(msg) {
+                        dw.backend.logMessage(msg, $('.settings.profile .control-group')[0], 'info');
+                    });
+                    _.each(data.data.errors, function(msg) {
+                        dw.backend.logMessage(msg, $('.settings.profile .control-group')[0], 'warning');
+                    });
+                    $('.profile .reset').prop('disabled', true);
                 } else {
-                    DW.logError(data.message, $('.settings.profile .control-group')[0]);
+                    dw.backend.logError(data.message, $('.settings.profile .control-group')[0]);
                 }
             }
          });
@@ -243,21 +259,19 @@ $(function() {
             pwd2 = $.trim($('#pwd2').val()),
             check;
 
-        DW.clearAlerts()
+        dw.backend.clearAlerts()
 
-        check = DW.checkPassword(curPwd, pwd, pwd2);
+        check = dw.backend.checkPassword(curPwd, pwd, pwd2);
         if (check === true) {
             // at first we req
             submit.addClass('loading');
 
             $.getJSON('/api/auth/salt', function(res) {
                 if (res.status == 'ok') {
-                    var salt = res.data.salt, time = res.data.time,
+                    var salt = res.data.salt
                         hmac = CryptoJS.HmacSHA256,
-                        hash = hmac(hmac(curPwd, salt).toString(), String(time)).toString(),
                         payload = {
-                            oldpwhash: hash,
-                            time: time,
+                            oldpwhash: hmac(curPwd, salt).toString(),
                             pwd: CryptoJS.HmacSHA256(pwd, salt).toString()
                         };
 
@@ -266,16 +280,22 @@ $(function() {
                     $('#cur-pwd').val('');
 
                     $.ajax({
-                        url: '/api/users/current',
+                        url: '/api/users/'+uid,
                         type: 'PUT',
                         data: JSON.stringify(payload),
                         dataType: 'json',
                         success: function(data) {
                             submit.removeClass('loading');
                             if (data.status == 'ok') {
-                                DW.logMessage('{% trans "Congrats! Your password has been changed." %}', parent);
-                            } else {
-                                DW.logError(data.message, parent);
+                                _.each(data.data.messages, function(msg) {
+                                    dw.backend.logMessage(msg, $('.settings.password .control-group')[0], 'info');
+                                });
+                                _.each(data.data.errors, function(msg) {
+                                    dw.backend.logMessage(msg, $('.settings.password .control-group')[0], 'warning');
+                                });
+                                if (!data.data.errors.length) {
+                                    dw.backend.logMessage('{% trans "Congrats! Your password has been changed." %}', parent);
+                                }
                             }
                         }
                     });
@@ -286,14 +306,14 @@ $(function() {
 
     // show password in clear text
     $('#show-passwords').change(function() {
-        var t = $('#show-passwords').attr('checked') ? 'text' : 'password';
+        var t = $('#show-passwords').prop('checked') ? 'text' : 'password';
         $('#pwd')[0].type = t;
         $('#pwd2')[0].type = t;
     });
 
-    $('#delete-account').attr('disabled', true);
+    $('#delete-account').prop('disabled', true);
     $('#are-you-sure').change(function() {
-        $('#delete-account').attr('disabled', $('#are-you-sure').attr('checked') != 'checked');
+        $('#delete-account').prop('disabled', !$('#are-you-sure').prop('checked'));
     });
     $('#delete-account').click(function() {
         $('#confirmDeletion').modal({
@@ -305,7 +325,7 @@ $(function() {
             if (r.status == 'ok') {
                 var cpwd = CryptoJS.HmacSHA256($('#confirm-pwd').val(), r.data.salt).toString();
                 $.ajax({
-                    url: '/api/users/current?pwd='+cpwd,
+                    url: '/api/users/'+uid+'?pwd='+cpwd,
                     type: 'DELETE',
                     data: JSON.stringify({
                         pwd: cpwd
@@ -322,19 +342,20 @@ $(function() {
                         $('#confirmDeletion .post-delete').addClass('modal-body');
                         $('#confirmDeletion .post-delete').show();
                     } else {
-                        DW.logError(res.message, $('#confirm-pwd').parent());
+                        dw.backend.logError(res.message, $('#confirm-pwd').parent());
                     }
                 }).fail(function(res) {
-                    DW.logError('could not delete user: ' + JSON.stringify(res), $('#confirm-pwd').parent());
+                    dw.backend.logError('could not delete user: ' + JSON.stringify(res), $('#confirm-pwd').parent());
                 });
             } else {
-                DW.logError('could not load salt', $('#confirm-pwd').parent());
+                dw.backend.logError('could not load salt', $('#confirm-pwd').parent());
             }
         });
     });
 });
 
 </script>
+{% endif %}
 
 {{ parent() }}
 {% endblock %}

@@ -5,7 +5,7 @@
  * combinations of datasets, visualizations and themes
  */
 
-define('ROOT_PATH', '../');
+define('ROOT_PATH', dirname(dirname(__FILE__)) . '/');
 define('NO_SLIM', 1);
 
 require_once ROOT_PATH . 'lib/bootstrap.php';
@@ -32,13 +32,13 @@ if ($user) {
 // create test user
 $user = new User();
 $user->setEmail('test');
-$pwd = !empty($cfg['testuser_pwd']) ? $cfg['testuser_pwd'] : 'test';
+$pwd = !empty($dw_config['testuser_pwd']) ? $dw_config['testuser_pwd'] : 'test';
 $user->setPwd(hash_hmac('sha256', $pwd, DW_AUTH_SALT));
 $user->setRole('editor');
 $user->setCreatedAt(time());
 $user->save();
 
-$themes = get_themes_meta(true);
+$themes = DatawrapperTheme::all(true);
 
 foreach (glob("../test/test-charts/*.json") as $test) {
     $config = json_decode(file_get_contents($test), true);

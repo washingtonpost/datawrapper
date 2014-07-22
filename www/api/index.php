@@ -10,14 +10,7 @@ define('ROOT_PATH', '../../');
 require_once ROOT_PATH . 'lib/bootstrap.php';
 
 $config = $GLOBALS['dw_config'];
-// Load CDN publishing class
-if (!empty($config['publish']) && !empty($config['publish']['requires'])) {
-    foreach($config['publish']['requires'] as $lib) {
-        require_once '../../' . $lib;
-    }
-}
 
-require '../../lib/utils/i18n.php';
 require '../../lib/utils/disable_cache.php';
 
 
@@ -65,15 +58,23 @@ function get_user_ips() {
     return $ips;
 }
 
+function if_is_admin($callback) {
+    $user = DatawrapperSession::getUser();
+    if ($user->isAdmin()) {
+        call_user_func($callback);
+    } else {
+        error('access-denied', 'need admin privileges.');
+    }
+}
 
-require_once '../../lib/utils/get_module.php';
 require_once '../../lib/api/users.php';
 require_once '../../lib/api/auth.php';
 require_once '../../lib/api/charts.php';
 require_once '../../lib/api/jobs.php';
 require_once '../../lib/api/visualizations.php';
-require_once '../../lib/api/github-deployment.php';
-require_once '../../lib/api/wordpress-deployment.php';
+require_once '../../lib/api/themes.php';
+require_once '../../lib/api/plugins.php';
+require_once '../../lib/api/organizations.php';
 
 
 /**

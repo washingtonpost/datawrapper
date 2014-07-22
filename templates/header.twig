@@ -1,59 +1,108 @@
+
+{% block header_nav_dropdown_link %}
+
+    {% if slink == 'divider' %}
+        <li class="divider"></li>
+    {% elseif slink.dropdown %}
+        <li class="dropdown-submenu">
+            <a tabindex="-1" href="#">{{ slink.title }}</a>
+            <ul class="dropdown-menu">
+                {% for slink in slink.dropdown %}
+                    {{ block('header_nav_dropdown_link') }}
+                {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li>
+            <a {% if slink.data %}{% for k,v in slink.data %}data-{{ k }}="{{ v }}" {% endfor %}{% endif %}href="{{ slink.url }}">{%if slink.icon %}<i class="{{ slink.icon }}"></i>
+             {% endif %}{{ slink.title | raw }}</a>
+        </li>
+    {% endif %}
+
+{% endblock %}
+
+{% block header_li_a %}
+        <li class="{{ link.id }}{% if link.dropdown %} dropdown{% endif %}{% if link.active %} active{% endif %}{% if link.justicon %} icon{% endif %}{% if link.class %} {{ link.class }}{% endif %}">
+            <a {% if link.tooltip %}title="{{ link.tooltip }}"{% endif %} id="dw-header-link-{{ link.id }}" href="{{ link.url }}" {% if link.dropdown %}class="dropdown-toggle" data-toggle="dropdown" {% elseif link.modal %} data-toggle="modal"{% endif %}>
+                {% if link.icon %}<i class="{{ link.icon }}"></i> {% endif %}
+                {% if not link.icon or not link.justicon %}
+                {{ link.title | raw }}
+                {% endif %}
+                {% if link.tooltip %}
+                <span class="tt">{{ link.tooltip | raw }}</span>
+                {% endif %}
+{% endblock %}
+
+
+{% block header_nav_link %}
+
+    {% if link == 'divider' %}
+
+        <li class="divider-vertical"></li>
+
+    {% elseif link.dropdown %}
+
+        {{ block('header_li_a') }}
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                {% for slink in link.dropdown %}
+                    {{ block('header_nav_dropdown_link') }}
+                {% endfor %}
+            </ul>
+        </li>
+
+    {% else %}
+
+        {{ block('header_li_a') }}
+            </a>
+        </li>
+
+    {% endif %}
+{% endblock %}
+
+
 {% block header %}
 
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-static-top{% if invert_navbar %} navbar-inverse{% endif %}">
         <div class="navbar-inner">
             <div class="container" style="position:relative">
-                 <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
 
                 <a class="brand" href="/">
-                    <!--[if IE ]>
-                    <img src="/static/img/abzv-logo.png">
-                    <![endif]-->
-                    {# <img class="hide-from-ie" src="/static/img/abzv-logo.svg" alt="ABZV" height="30" width="69" /> #}
-                    Datawrapper on the Washington Post<span class="beta"></span>
+                    {% if custom_logo %}
+                        <img src="{{ custom_logo }}" />
+                    {% endif %}
+                    {% if config.custom_title %}{{ config.custom_title }}{% else %}Datawrapper{% endif %}<span class="beta">{{ config.custom_title_tag }}</span>
                 </a>
 
                 <div class="nav-collapse">
                     <ul class="nav dw-header-nav pull-right">
 
                     {% for link in headlinks %}
-
-                        {% if link.dropdown %}
-
-                            <li class="{{ link.id }} dropdown{% if link.active %} active{% endif %}">
-                                <a id="dw-header-link-{{ link.id }}" href="{{ link.url }}" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="icon-{{ link.icon }} icon-whte"></i>
-                                    {{ link.title }}
-                                    <b class="caret"></b>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    {% for slink in link.dropdown %}
-                                    <li><a href="{{ slink.url }}">{%if slink.icon %}<i class="icon-{{ slink.icon }}"></i> {% endif %}{{ slink.title }}</a></li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-
-                        {% else %}
-
-                            <li class="{{ link.id }}{% if link.active %} active{% endif %}">
-                                <a id="dw-header-link-{{ link.id }}" href="{{ link.url }}"{% if link.modal %} data-toggle="modal"{% endif %}>
-                                  <i class="icon-{{ link.icon }} icon-whie"></i>
-                                   {{ link.title }}
-                                </a>
-                            </li>
-
-                        {% endif %}
-
+                        {{ block('header_nav_link') }}
                     {% endfor %}
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+    $(function() {
+        $('.navbar li.icon a[title]').mouseenter(function() {
+            $('.navbar-static-top .tooltip').hide();
+        });
+        $('.navbar-static-top li a[title]').tooltip({
+            placement: 'bottom',
+            container: '.navbar-static-top',
+            delay: 0
+        });
+    });
+    </script>
 
 
 {% endblock %}
