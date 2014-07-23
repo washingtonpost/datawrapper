@@ -5,7 +5,7 @@ Datawrapper is a tool that enables anyone to create enticing visualizations in s
 ## Known bugs
 
 - Some versions of Firefox: Clicking on chart create button redirects to homepage.
-- Some versions of Firefox: Upload data button gives alert "Error:
+- Some versions of Firefox (noticed on v. 30): Upload data button gives alert "Error:
   false" and does not upload the data.
 
 It draws inspiration from [ManyEyes](http://www-958.ibm.com/software/data/cognos/manyeyes/) and [GoogleCharts](https://developers.google.com/chart/) but remains entirely open-source and independent from a third-party server.
