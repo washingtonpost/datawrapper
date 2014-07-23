@@ -2,18 +2,11 @@
 
 Datawrapper is a tool that enables anyone to create enticing visualizations in seconds, without any programming skills.
 
-## Upgrading from `master` branch:
+## Known bugs
 
-- update `datawrapper.conf`
-- update `config.yaml`
-- backup database
-- run `upgrade.sql`
-- install plugins:
-
-    php scripts/plugin.php install theme-default
-    php scripts/plugin.php install "visualization*"
-    php scripts/plugin.php install core-vis-options
-    php scripts/plugin.php install publish-s3
+- Some versions of Firefox: Clicking on chart create button redirects to homepage.
+- Some versions of Firefox: Upload data button gives alert "Error:
+  false" and does not upload the data.
 
 It draws inspiration from [ManyEyes](http://www-958.ibm.com/software/data/cognos/manyeyes/) and [GoogleCharts](https://developers.google.com/chart/) but remains entirely open-source and independent from a third-party server.
 
