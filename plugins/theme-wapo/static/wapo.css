@@ -1,44 +1,41 @@
 
 /*
- * Washington Post Theme
+ * Default Theme
  * -------------
  *
  */
 
 body, html {
     height: 99%;
-    font-size: 14px;
-    line-height: 14px;
+    font-family: FranklinITCStdLight,"Franklin Gothic","ITC Franklin Gothic",Arial,sans-serif;
     font-family: FranklinITCStdLight,Helvetica,Arial,sans-serif;
     font-weight: 400;
-}
-
-.bold {
-    font-family: FranklinITCProBold,Helvetica,Arial,sans-serif;
-    font-family: FranklinITCProThin,Helvetica,Arial,sans-serif;
+    font-size: 14px;
 }
 
 a { color: #0088CC; }
 
 body.chart {
+    margin: 0 5px;
     background: #fff;
 }
 
 h1 {
-    text-align: left;
     font-family: FranklinITCProBold,Helvetica,Arial,sans-serif;
-    font-weight: 400;
-    font-size: 2.0em;
-    line-height: 1.2em;
+    font-size: 28px;
+    line-height: 33px;
+    font-weight: normal;
     margin: 0;
+    text-align: left;
+}
+
+h1 span {
 }
 
 /* NOTE: On IE, there is a border around each image which is a link */
 a img { border:0px; }
 
-.chart p {
-    margin: 2px 0 6px 0;
-}
+.chart p { margin: 5px 0 10px!important; line-height: 17px;}
 
 #chart {
     margin-top: 10px;
@@ -49,12 +46,13 @@ a img { border:0px; }
 }
 
 .label {
-    font-size: 1em;
+    font-size: 14px;
 }
 
 .label span {
     color: #333;
     text-shadow: 0 0 2px #fff;
+    font-size: 13px;
 }
 
 .label.inverted span {
@@ -78,7 +76,7 @@ a img { border:0px; }
 }
 
 .label.hover {
-    font-family: FranklinITCProBold,Helvetica,Arial,sans-serif;
+    font-weight: bold;
 }
 
 .label.inverted span {
@@ -86,14 +84,13 @@ a img { border:0px; }
 }
 
 .label.highlighted {
-    font-family: FranklinITCProBold,Helvetica,Arial,sans-serif;
+    font-weight: bold;
 }
 
 .label.value span {
 }
 
 .label.series span {
-    font-size: 0.9em;
 }
 
 
@@ -149,6 +146,11 @@ within the .toggleable-panel */
 
 .footer-right .toggle-panel:after {
     content:" ▲";
+}
+
+/* Add a comma after the source block */
+.toggleable-panel .source-block:after {
+/*    content:"," */
 }
 
 /* This oiverlay cover the body when the toggleable panel is open */
