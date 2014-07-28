@@ -26,11 +26,30 @@ $app->put('/account/lang', function() use ($app) {
 /* login user */
 $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
-    // First, check username against LDAP
     $user = $payload->user;
-    $ds=ldap_connect("***REMOVED***");
+    $config = $GLOBALS['dw_config'];
+    $admin = false;
+
+    //check for admin user against global config file
+    if ($user === $config["admin"]["username"]){
+        $admin = true;
+    }
+    //for non admin accounts, connect to ldap
+    if ($admin === false){
+        $ds=ldap_connect("***REMOVED***");
+    }
     try {
-        $r = ldap_bind($ds, "${user}@***REMOVED***", $payload->password);
+        //for non admin accounts, check TWPN credentials via ldap
+        if ($admin === false){
+            $r = ldap_bind($ds, "${user}@***REMOVED***", $payload->password);
+        }
+        else{
+            //check admin password against config file
+            if($payload->password != $config["admin"]["password"]){
+                $error = 'Invalid admin password';
+                throw new Exception($error);
+            }
+        }
         $user = UserQuery::create()->findOneByEmail($payload->user);
 
         if (!empty($user)) {
@@ -40,9 +59,15 @@ $app->post('/auth/login', function() use($app) {
             $user = new User();
             $user->setCreatedAt(time());
             $user->setEmail($payload->user);
-            $user->setPwd("via_ldap");
+            if($admin === false){
+                $user->setPwd("via_ldap");
+                $user->setRole("editor");
+            }
+            else{
+                $user->setPwd("via_admin_config");
+                $user->setRole("admin");
+            }
             $user->setLanguage("en_GB");
-            $user->setRole("editor");
             $user->save();
             DatawrapperSession::login($user, $payload->keeplogin == true);
             ok();
@@ -52,19 +77,88 @@ $app->post('/auth/login', function() use($app) {
     }
 
 
+    // $payload = json_decode($app->request()->getBody());
+    // // First, check username against LDAP
+    // $user = $payload->user;
+    // // console.log($payload);
 
-    // if (!empty($user) && $user->getDeleted() == false) {
-    //     $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
-    //     if ($hash === $payload->pwhash) {
+    // $config = $GLOBALS['dw_config'];
+
+    // if ($user == $config["admin"]["username"]){
+    // //     try {
+    // //         $user = UserQuery::create()->findOneByEmail($payload->user);
+
+    // //     if (!empty($user)) {
+    // //         DatawrapperSession::login($user, $payload->keeplogin == true);
+    // //         ok();
+    // //     } else {
+
+    // //         $user = new User();
+    // //         $user->setCreatedAt(time());
+    // //         $user->setEmail($config["admin"]["username"]);
+    // //         $user->setPwd($config["admin"]["password"]);
+    // //         $user->setLanguage("en_GB");
+    // //         $user->setRole("admin");
+    // //         $user->save();
+    // //         DatawrapperSession::login($user, $payload->keeplogin == true);
+    // //         ok();
+    // //     }
+    // // } catch (Exception $e) {
+    // //     // error()
+    // //     error('login-invalid', __($e));
+    // // }
+    //     $admin = true;
+    // }
+
+   
+    // if (!admin){
+    //     $ds=ldap_connect("***REMOVED***");
+    // }
+    // try {
+    //     if (!admin){
+    //         $r = ldap_bind($ds, "${user}@***REMOVED***", $payload->password);
+    //     }
+    //     $user = UserQuery::create()->findOneByEmail($payload->user);
+
+    //     if (!empty($user)) {
     //         DatawrapperSession::login($user, $payload->keeplogin == true);
     //         ok();
     //     } else {
-    //         Action::logAction($user, 'wrong-password', json_encode(get_user_ips()));
-    //         error('login-invalid', _('The password is incorrect.'));
+    //         $user = new User();
+    //         $user->setCreatedAt(time());
+    //         $user->setEmail($payload->user);
+    //         if(!admin){
+    //             $user->setPwd("via_ldap");
+    //             $user->setRole("editor");
+    //         }
+    //         else{
+    //             $user->setPwd($payload->password);
+    //             $user->setRole("admin");
+    //         }
+    //         $user->setLanguage("en_GB");
+    //         $user->save();
+    //         DatawrapperSession::login($user, $payload->keeplogin == true);
+    //         ok();
     //     }
-    // } else {
-    //     error('login-email-unknown', _('The email is not registered yet.'));
+    // } catch (Exception $e) {
+    //     error('login-invalid', __('Invalid login.'));
     // }
+    
+
+
+
+    // // if (!empty($user) && $user->getDeleted() == false) {
+    // //     $hash = hash_hmac('sha256', $user->getPwd(), $payload->time);
+    // //     if ($hash === $payload->pwhash) {
+    // //         DatawrapperSession::login($user, $payload->keeplogin == true);
+    // //         ok();
+    // //     } else {
+    // //         Action::logAction($user, 'wrong-password', json_encode(get_user_ips()));
+    // //         error('login-invalid', _('The password is incorrect.'));
+    // //     }
+    // // } else {
+    // //     error('login-email-unknown', _('The email is not registered yet.'));
+    // // }
 });
 
 /* return the server salt for secure auth */
