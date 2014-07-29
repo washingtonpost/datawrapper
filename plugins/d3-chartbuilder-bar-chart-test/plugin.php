@@ -4,7 +4,7 @@ class DatawrapperPlugin_D3ChartbuilderBarChartTest extends DatawrapperPlugin {
 
 public function init(){
         $visMeta = array(
-            "id" => "d3-bar-test",
+            "id" => "d3-chartbuilder-bar-test",
             "title" => "Bar Chart (d3)",
             "libraries" => array(
             	array(
