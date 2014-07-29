@@ -1,0 +1,78 @@
+@import url('./GothamSSm.css');
+
+svg #ground {
+	fill: #fff;
+	stroke: none;
+}
+
+svg .axis line {
+	fill: none;
+	stroke-width: 1px;
+	shape-rendering: crispEdges;
+}
+
+svg #baseline g.zero line {
+	stroke: #222;
+	shape-rendering: crispEdges;
+	fill: none;
+	stroke-width: 1px;
+}
+
+svg #xAxis line {
+	stroke: #666;
+}
+
+svg #xAxis{
+	fill: #666666;
+}
+
+svg .axis path {
+	stroke: none;
+	fill: none;
+}
+
+svg #yAxis .tick {
+	stroke: #e5e5e5;
+	stroke-dasharray: 2;
+}
+
+svg #yAxis .zero .tick {
+	stroke: #666;
+	stroke-dasharray: 0;
+}
+
+svg #baseline text,
+svg .axis text,
+svg .bar text {
+	font-family: 'HelveticaNeueW01-57Cn','Gotham SSm',Helvetica, sans-serif;
+	font-size: 15px;
+	fill: #333;
+}
+
+svg .legendItem text {
+	font-family: 'HelveticaNeueW01-57Cn','Gotham SSm',Helvetica, sans-serif;
+	font-size:  15px;
+}
+
+svg text.metaText {
+	font-family: 'HelveticaNeueW01-57Cn','Gotham SSm',Helvetica, sans-serif;
+	font-size:  15px;
+	text-rendering:   optimizeLegibility;
+}
+
+svg text.barLabel, 
+svg text.bargridLabel {
+	font-family: 'HelveticaNeueW01-57Cn','Gotham SSm',Helvetica, sans-serif;
+	font-size: 15px
+}
+
+svg #titleLine {
+  font-family: 'HelveticaNeueW01-77BdCn 692722','Gotham SSm',Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 17px;
+  fill: #333;
+}
+
+svg .bar rect {
+	shape-rendering: crispEdges;
+}

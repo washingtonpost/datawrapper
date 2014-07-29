@@ -1,0 +1,300 @@
+body {
+	padding-top: 50px;
+}
+
+h2 {
+	font-size: 24px;
+	margin-top: 20px;
+}
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+nav ul li {
+  float: left;
+  height: 44px;
+  line-height: 44px;
+  margin-left: 22px;
+  font-size: 12px;
+}
+nav ul li:first-child {
+  margin-left: 0;
+}
+nav a,
+nav a:link,
+nav a:visited {
+  color: #6d8ac4;
+  font-weight: bold;
+  text-transform: lowercase;
+}
+nav a:hover,
+nav a:active {
+  color: #bccae5;
+}
+nav .site-links {
+  float: left;
+  margin-left: 30px;
+}
+nav .site-links-2 {
+  float: right;
+  margin-right: 120px;
+}
+nav .npr {
+  width: 61px;
+}
+nav .npr img {
+  margin: -2px 0 0 0;
+  width: 100%;
+  height: auto;
+}
+
+nav.tools {
+  background: #222;
+  margin: 0;
+  padding: 25px 30px;
+  color: #eee;
+  height: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+nav.tools h1 {
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Gotham SSm", Arial, Helvetica, sans-serif;
+  line-height: 32px;
+  margin: 0;
+}
+nav.tools h1 span.help {
+  font-size: 14px;
+  margin-left: 11px;
+  opacity: 0.7;
+  text-transform: none;
+}
+nav.tools h1 span.help i {
+  margin-right: 5px;
+}
+nav.tools a {
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  color: #eee;
+}
+nav.tools a:hover {
+  opacity: 0.7;
+  color: #eee;
+}
+nav.tools img {
+  height: 20px;
+  width: auto;
+  border: 1px solid #eee;
+  margin-right: 5px;
+}
+nav.tools a.toolkit-link {
+  float: right;
+  line-height: 32px;
+  font-size: 16px;
+}
+nav.tools a.toolkit-link:hover {
+	color: #eee;
+}
+.generator nav.tools {
+  display: block;
+}
+header {
+  padding: 22px 30px;
+}
+header:before,
+header:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+header:after {
+  clear: both;
+}
+header:before,
+header:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+header:after {
+  clear: both;
+}
+header h1 {
+  float: left;
+  font-size: 24px;
+  margin: 0;
+}
+header h2 {
+  font: 15px "Gotham SSm", "Century Gothic", Arial, Helvetica, sans-serif;
+  color: #666;
+  margin: 9px 0 0 11px;
+  font-size: 14px;
+  float: left;
+  display: none;
+}
+
+
+.btn-lg,
+.glyphicon {
+	-webkit-font-smoothing: antialiased;
+}
+
+.btn .glyphicon {
+	margin-right: 5px;
+}
+
+#main-wrapper {
+/*	display: table;*/
+}
+
+#chart-column,
+#main {
+/*	display: table-cell;*/
+	vertical-align: top;
+}
+
+#chart-column {
+	width: 331px;
+	padding: 15px;
+	position: fixed;
+	overflow: hidden;
+	height: 100%;
+	background: #fff;
+	border-right: 1px solid #ddd;
+}
+
+#chart-column p {
+	margin-top: 15px;
+}
+
+#main {
+	padding: 0 0 60px 330px;
+}
+
+#canvas, #favicanvas {
+	display: none;
+}
+
+
+.navbar-brand {
+	text-transform: uppercase;
+	font-size: 24px;
+}
+
+.navbar-right {
+	margin: 9px 15px 6px;
+}
+
+
+#rightAxisControls .form-control {
+	width: 100px;
+}
+
+.step-header {
+	background: #333;
+	color: #fff;
+	border-radius: 36px;
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	text-align: center;
+	line-height: 36px;
+	font-size: 18px;
+}
+
+.seriesItemGroup {
+	margin-bottom: 5px;
+}
+
+.seriesItemGroup label {
+	line-height: 25px;
+}
+
+div.colorPicker-picker {
+	float: left;
+	margin-right: 25px;
+}
+
+#previous-charts {
+	border-top: none;
+	background: #f5f5f5;
+	padding-top: 15px;
+}
+
+#import {
+	position: relative;
+}
+
+#import h2 {
+	margin-top: 0;
+}
+
+#import > div {
+	margin-top: 0;
+}
+
+#reset-form {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+}
+
+.series-colors.control-label {
+	padding-top: 0;
+}
+
+.control-instructions {
+	padding-top: 10px;
+}
+
+#csvInput {
+	margin-bottom: 10px;
+}
+
+#transpose-data {
+	margin-bottom: 10px;
+}
+
+#typePicker {
+	margin-bottom: 10px;
+}
+
+#chart-options .text-muted {
+	font-weight: normal;
+}
+
+#download-modal {
+	padding-top: 15%;
+}
+
+.row > .col-md-12 {
+	border-top: 1px solid #e5e5e5;
+	padding-top: 10px;
+	margin-top: 40px;
+}
+
+.row:first-child > .col-md-12 {
+	border-top: none;
+	margin-top: 0;
+}
+
+.modal-backdrop.fade.in {
+	opacity: 0.8;
+}
+
+#font-sample {
+	font-family: 'HelveticaNeueW01-57Cn','Gotham SSm',Helvetica, sans-serif;
+    display: none;
+}
+
+#export .help-block {
+    color: #b94a48;
+}

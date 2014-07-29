@@ -1,0 +1,49 @@
+div.colorPicker-picker {
+  height: 25px;
+  width: 25px;
+  padding: 0 25px 0 0 !important;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 25px;
+  margin-right: 25px;
+  position: relative;
+}
+
+div.colorPicker-picker:after {
+  content: ' ';
+  background: url('http://media.npr.org/chrome_svg/chevron-small.svg');
+  background-size: 95%;
+  display: block;
+  width: 15px;
+  height: 8px;
+  position: absolute;
+  right: -18px;
+  top: 7px;
+
+}
+
+div.colorPicker-palette {
+  width: 140px;
+  position: absolute;
+  border: 1px solid #ccc;
+  background-color: #EFEFEF;
+  padding: 1px;
+  z-index: 9999;
+  -webkit-box-shadow: 0 1px 10px rgba(0,0,0,.3);
+     -moz-box-shadow: 0 1px 10px rgba(0,0,0,.3);
+          box-shadow: 0 1px 10px rgba(0,0,0,.3);
+}
+  div.colorPicker_hexWrap {width: 100%; float:left }
+  div.colorPicker_hexWrap label {font-size: 95%; color: #2F2F2F; margin: 5px 2px; width: 25%}
+  div.colorPicker_hexWrap input {margin: 5px 2px; padding: 0; font-size: 95%; border: 1px solid #000; width: 65%; }
+
+div.colorPicker-swatch {
+  height: 25px;
+  width: 25px;
+  margin: 1px;
+  float: left;
+  cursor: pointer;
+  line-height: 12px;
+  border: none;
+}
