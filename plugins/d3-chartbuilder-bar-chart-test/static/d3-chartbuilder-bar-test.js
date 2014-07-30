@@ -3,27 +3,27 @@ dw.visualization.register('d3-chartbuilder-bar-test', {
 
 	render: function($element, dataset, axes, theme) {
 	    // create the empty structure
-	    // console.log($element);//this.setRoot($element)
-	    // var data = [];
-	    // dataset = this.dataset;
-	    // axes = this.axes();
+	    console.log($element);//this.setRoot($element)
+	    var test_data = [];
+	    dataset = this.dataset;
+	    axes = this.axes();
+	    theme = this.theme();
+	    console.log(axes);
+	    console.log(dataset.toCSV())
 	    // theme = this.theme();
-	    // console.log(axes);
-	    // console.log(dataset.toCSV())
-	    // // theme = this.theme();
-	    // // console.log(axes)
-	    // // loop over each row in our dataset
-	    // // dataset.eachRow(function(i) {
-	    // // 	var name = dataset.column(axes.labels).val(i);
-	    // // 	var value = dataset.column(axes.bars).val(i);
-	    // //     // append new objects for each row
-	    // //     // with the values from the axes
-	    // //     data.push(
-	    // //         {name: name,
-	    // //         value: value}
-	    // //     );
-	    // // });
-	    // console.log(data)
+	    // console.log(axes)
+	    // loop over each row in our dataset
+	    dataset.eachRow(function(i) {
+	    	var name = dataset.column(axes.labels).val(i);
+	    	var value = dataset.column(axes.bars).val(i);
+	        // append new objects for each row
+	        // with the values from the axes
+	        test_data.push(
+	            {name: name,
+	            value: value}
+	        );
+	    });
+	    console.log(test_data)
 
 /**
 * A bar chart. Required data format:
@@ -39,6 +39,7 @@ dw.visualization.register('d3-chartbuilder-bar-test', {
 *    .max(1.0);
 *  bargraph.draw(bardata);
 */
+console.log(this.dataset)
 var COMMA = ',';
 var TAB = String.fromCharCode(9);
 
@@ -49,13 +50,14 @@ var SAMPLE_CHART = {
     chart_title: 'Sample data',
     name: 'Sample data',
     created: (new Date()).valueOf(),
-    csvInput: "\
-Name,First value,Second value\n\
-2009,7.8,10.1\n\
-2010,9.8,0\n\
-2011,9.1,-30.6\n\
-2012,8.3,2.2\n\
-2013,7.9,5"
+    csvInput: dataset.toCSV()
+//     "\
+// Name,First value,Second value\n\
+// 2009,7.8,10.1\n\
+// 2010,9.8,0\n\
+// 2011,9.1,-30.6\n\
+// 2012,8.3,2.2\n\
+// 2013,7.9,5"
 }
 
 // $.fn.fieldMessage = function(type, message){
@@ -294,9 +296,9 @@ ChartBuilder = {
         /*
          * Update the chart config from the latest UI state.
          */
-        console.log(SAMPLE_CHART["csvInput"]);
+        // console.log(SAMPLE_CHART["csvInput"]);
         var data = SAMPLE_CHART["csvInput"]//$.trim($("#csvInput").val());
-        console.log(data)
+        // console.log(data)
 
         // if (!data) {
         //     ChartBuilder.showInvalidData('Copy and paste some data from your spreadsheet!');
