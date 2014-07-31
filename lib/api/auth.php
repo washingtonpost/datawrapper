@@ -30,8 +30,8 @@ $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
     $user = $payload->user;
     $config = $GLOBALS['dw_config'];
-    $HOSTNAME_CONNECT = $config["hostname_connect"];
-    $HOSTNAME_BIND = $config["hostname_bind"];
+    $HOSTNAME_CONNECT = $config["ldap"]["hostname_connect"];
+    $HOSTNAME_BIND = $config["ldap"]["hostname_bind"];
     $admin = false;
 
     //check for admin user against global config file
