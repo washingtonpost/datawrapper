@@ -130,7 +130,7 @@ ldap:
     query_user: "pskroob"
     query_password: "12345"
 
-#temp solutino to login system
+#temp solution to login system
 admin:
     username: "pskroob"
     password: "12345"
