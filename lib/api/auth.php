@@ -1,5 +1,7 @@
 <?php
 
+require_once ROOT_PATH . 'lib/utils/ldap_functions.php';
+
 /* get session info */
 $app->get('/account', function() {
     try {
@@ -28,6 +30,8 @@ $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
     $user = $payload->user;
     $config = $GLOBALS['dw_config'];
+    $HOSTNAME_CONNECT = $config["hostname_connect"];
+    $HOSTNAME_BIND = $config["hostname_bind"];
     $admin = false;
 
     //check for admin user against global config file
@@ -36,12 +40,12 @@ $app->post('/auth/login', function() use($app) {
     }
     //for non admin accounts, connect to ldap
     if ($admin === false){
-        $ds=ldap_connect("ldaptc.twpn.root.washpost.com");
+        $ds=ldap_connect($HOSTNAME_CONNECT);
     }
     try {
         //for non admin accounts, check TWPN credentials via ldap
         if ($admin === false){
-            $r = ldap_bind($ds, "${user}@TWPN.ROOT.WASHPOST.COM", $payload->password);
+            $r = ldap_bind($ds, "${user}@" . $HOSTNAME_BIND, $payload->password);
         }
         else{
             //check admin password against config file
