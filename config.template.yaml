@@ -122,3 +122,15 @@ plugins:
 ## create_test_charts.php creates a test user who owns
 ## the test charts, and will get the following password:
 # testuser_pwd: '1234'
+
+#used by ldap functions to connect to system and search for users/ groups
+ldap:
+    hostname_connect: "connect.to.system.com"
+    hostname_bind: "bind.to.system.com"
+    query_user: "pskroob"
+    query_password: "12345"
+
+#temp solutino to login system
+admin:
+    username: "pskroob"
+    password: "12345"
