@@ -4,8 +4,12 @@
     dw.visualization.register('column-chart', 'raphael-chart', {
 
         render: function(el) {
+
+
             var me = this, filter, filterUI, sortBars, reverse, c, dataset = me.dataset,
                 chart_width, column_gap, row_gap, row, column, bars, theme = me.theme();
+            //empy label obj, borrowed implementation from grouped-column-chart.js
+            me.__gridlabels = {};
 
             me.axesDef = me.axes();
             if (!me.axesDef) return;
@@ -373,7 +377,6 @@
                 tickLabels = me.__tickLabels = me.__tickLabels || {},
                 gridLines = me.__gridLines = me.__gridLines || {},
                 formatter = me.chart().columnFormatter(me.getBarColumn());
-
             if (!me.gridVisible()) ticks = [];
 
             ticks = ticks.filter(function(val, t) {
@@ -385,12 +388,36 @@
                 // c.paper.text(x, y, val).attr(styles.labels).attr({ 'text-anchor': 'end' });
                 if (theme.columnChart.cutGridLines) ly += 10;
                 var key = String(val);
-                // show or update label
+
+                /**
+                * Solution to label rounding from grouped-column-chart.js
+                * Note diff's between horzGrid implementations in 2 files.                
+                *
+                * To fix label rounding, set 3rd parameter to `false`
+                * In dw.js/src/dw.chart.js the function exists:
+                * `formatValue: function(val, full, round)`
+                * which is what is being called below. NOT this files
+                * formatValue, which calls `columnFormatter(column)`
+                * in /dw.js/dw-2.0.js, and is the columnformatter used
+                * to format bar values
+                */
+                var txt = me.formatValue(val, t == ticks.length-1, false);
+
+                //overriding the columnFormatter implementation of grid labels
                 if (val !== 0) {
-                    var lbl = tickLabels[key] = tickLabels[key] ||
-                        me.label(x+2, ly, formatter(val, t == ticks.length-1, true),
-                            { align: 'left', cl: 'axis', css: { opacity: 0 } });
-                    lbl.animate({ x: c.lpad+2, y: ly, css: { opacity: 1 } }, theme.duration, theme.easing);
+                    /**
+                    * Note differences in implementation:
+                    * original version usese ticklabels obj, new uses gridlabels
+                    *   (unclear if by design or just inconsistent)
+                    * original version uses formatter (defined above as ColumFormatter)
+                    * this version uses the formValue function w/ in this obj
+                    */
+                    // var lbl = tickLabels[key] = tickLabels[key] ||
+                    //     me.label(x+2, ly, formatter(val, t == ticks.length-1, true),
+                    //         { align: 'left', cl: 'axis', css: { opacity: 0 } });
+                    lbl = me.__gridlabels[val] = me.__gridlabels[val] || me.label(x+2, ly, txt, { align: 'left', cl: 'axis', css: { opacity: 0 } });
+                    //lbl.animate({ x: x+2, y: ly, css: { opacity: 1 } }, me.theme().duration, me.theme().easing);
+                    lbl.animate({ x: x+2, y: ly, css: { opacity: 1 } }, theme.duration, theme.easing);
                 }
                 if (theme.yTicks) {
                     me.path([['M', c.lpad-25, y], ['L', c.lpad-20,y]], 'tick');
@@ -442,6 +469,19 @@
 
             me.__lastTicks = ticks;
             me.__lastDomain = domain.slice(0);
+        },
+
+
+        /**
+        * Included from grouped-column-chart.js
+        * to address tick label rounding errors
+        */
+        formatValue: function() {
+            var me = this;
+            // we're overwriting this function with the actual column formatter
+            // when it is first called (lazy evaluation)
+            me.formatValue = me.chart().columnFormatter(me.axes(true).columns[0]);
+            return me.formatValue.apply(me, arguments);
         },
 
         hover: function() {
