@@ -8,6 +8,7 @@
 
         render: function(el) {
 
+
             this.setRoot(el);
 
             var me = this,
@@ -59,6 +60,7 @@
 
             if (!me.theme().columnChart.cutGridLines) me.horzGrid();
 
+
             me.update();
 
             // enable mouse events
@@ -84,6 +86,7 @@
         },
 
         update: function() {
+
             var me = this,
                 c = me.__canvas,
                 n = me.axesDef.columns.length;
@@ -254,7 +257,6 @@
                 domain = me.__domain,
                 styles = me.__styles,
                 ticks = me.getYTicks(yscale, c.h, true);
-
             ticks = ticks.filter(function(val, t) {
                 return val >= domain[0] && val <= domain[1];
             });
@@ -262,7 +264,17 @@
             _.each(ticks, function(val, t) {
                 var y = c.h - c.bpad - yscale(val),
                     x = c.lpad, ly = y-10, lbl,
-                    txt = me.formatValue(val, t == ticks.length-1, true);
+                /**
+                * To fix label rounding, set 3rd parameter to `false`
+                * In dw.js/src/dw.chart.js the function exists:
+                * `formatValue: function(val, full, round)`
+                * which is what is being called above. NOT this files
+                * formatValue, which calls `columnFormatter(column)`
+                * in /dw.js/dw-2.0.js, and is the columnformatter used
+                * to format bar values
+                */
+                    txt = me.formatValue(val, t == ticks.length-1, false);
+
                 // c.paper.text(x, y, val).attr(styles.labels).attr({ 'text-anchor': 'end' });
                 if (me.theme().columnChart.cutGridLines) ly += 10;
 
@@ -270,6 +282,7 @@
                     lbl = me.__gridlabels[val] = me.__gridlabels[val] || me.label(x+2, ly, txt, { align: 'left', cl: 'axis', css: { opacity: 0 } });
                     lbl.animate({ x: x+2, y: ly, css: { opacity: 1 } }, me.theme().duration, me.theme().easing);
                 }
+
 
                 if (me.theme().yTicks) {
                     me.path([['M', c.lpad-25, y], ['L', c.lpad-20,y]], 'tick');
@@ -360,9 +373,12 @@
 
         formatValue: function() {
             var me = this;
+            console.log(this)
             // we're overwriting this function with the actual column formatter
             // when it is first called (lazy evaluation)
             me.formatValue = me.chart().columnFormatter(me.axes(true).columns[0]);
+            console.log(me.axes(true).columns[0]);
+            console.log(me.chart().columnFormatter);
             return me.formatValue.apply(me, arguments);
         },
 
