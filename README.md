@@ -9,6 +9,13 @@ Datawrapper is a tool that enables anyone to create enticing visualizations in s
   false" and does not upload the data. #7
 - In some cases, logging in from / which redirects to /login results in a redirect loop error. #5
 
+## Known bugs
+
+- Some versions of Firefox: Clicking on chart create button redirects to homepage. #6
+- Some versions of Firefox (noticed on v. 30): Upload data button gives alert "Error:
+  false" and does not upload the data. #7
+- In some cases, logging in from / which redirects to /login results in a redirect loop error. #5
+
 It draws inspiration from [ManyEyes](http://www-958.ibm.com/software/data/cognos/manyeyes/) and [GoogleCharts](https://developers.google.com/chart/) but remains entirely open-source and independent from a third-party server.
 
 It was created by [Mirko Lorenz](http://www.mirkolorenz.com/), [Nicolas Kayser-Bril](http://nkb.fr) and [Gregor Aisch](http://driven-by-data.net/) and was funded by [ABZV](http://www.abzv.de/).
