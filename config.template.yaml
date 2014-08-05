@@ -108,6 +108,13 @@ plugins:
 #     path: /path/to/phantomjs
 
 
+#used by ldap functions to connect to system and search for users/ groups
+ldap:
+    ldap_server: path.to.ldap.server.com
+    ldap_domain: path.to.ldap.domain.com
+    admin_groups: ["groupname1","groupname2"]
+
+
 ########################################################
 #                                                      #
 #  Anything below this line is for debugging/testing   #
@@ -123,14 +130,5 @@ plugins:
 ## the test charts, and will get the following password:
 # testuser_pwd: '1234'
 
-#used by ldap functions to connect to system and search for users/ groups
-ldap:
-    hostname_connect: "connect.to.system.com"
-    hostname_bind: "bind.to.system.com"
-    query_user: "pskroob"
-    query_password: "12345"
 
-#temp solution to login system
-admin:
-    username: "pskroob"
-    password: "12345"
+

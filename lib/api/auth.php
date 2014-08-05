@@ -1,6 +1,6 @@
 <?php
 
-// require_once ROOT_PATH . 'lib/utils/ldap_functions.php';
+require_once ROOT_PATH . 'lib/utils/ldap_functions.php';
 
 /* get session info */
 $app->get('/account', function() {
@@ -28,47 +28,42 @@ $app->put('/account/lang', function() use ($app) {
 /* login user */
 $app->post('/auth/login', function() use($app) {
     $payload = json_decode($app->request()->getBody());
-    $user = $payload->user;
+    $user = $payload->user;      
     $config = $GLOBALS['dw_config'];
-    $LDAP_SERVER = $config["ldap"]["ldap_server"];
-    $LDAP_DOMAIN = $config["ldap"]["ldap_domain"];
+    $LDAP_SERVER =  $config["ldap"]["ldap_server"];
+    $LDAP_DOMAIN =  $config["ldap"]["ldap_domain"];
+    $ADMIN_GROUPS = $config["ldap"]["admin_groups"];
     $admin = false;
 
     //check for admin user against global config file
-    if ($user === $config["admin"]["username"]){
-        $admin = true;
-    }
-    //for non admin accounts, connect to ldap
-    if ($admin === false){
-        $ds=ldap_connect($LDAP_SERVER);
-    }
-    try {
-        //for non admin accounts, check TWPN credentials via ldap
-        if ($admin === false){
-            $r = ldap_bind($ds, "${user}@" . $LDAP_DOMAIN, $payload->password);
+    foreach ($ADMIN_GROUPS as $key => $value){
+        if(memberof_twpn_group($LDAP_DOMAIN, $LDAP_SERVER, $user,$payload->password,$value)){
+            $admin = true;
         }
-        else{
-            //check admin password against config file
-            if($payload->password != $config["admin"]["password"]){
-                $error = 'Invalid admin password';
-                throw new Exception($error);
-            }
-        }
-        $user = UserQuery::create()->findOneByEmail($payload->user);
+    }
 
+    $ds=ldap_connect($LDAP_SERVER);
+    
+    try {
+        $r = ldap_bind($ds, "${user}@" . $LDAP_DOMAIN, $payload->password);
+        
+        $user = UserQuery::create()->findOneByEmail($user);
+        
         if (!empty($user)) {
+            if($admin === true && $user->getRole() != "admin"){
+               $user->setRole("admin");
+            }
             DatawrapperSession::login($user, $payload->keeplogin == true);
             ok();
         } else {
             $user = new User();
             $user->setCreatedAt(time());
             $user->setEmail($payload->user);
+            $user->setPwd("via_ldap");
             if($admin === false){
-                $user->setPwd("via_ldap");
                 $user->setRole("editor");
             }
             else{
-                $user->setPwd("via_admin_config");
                 $user->setRole("admin");
             }
             $user->setLanguage("en_GB");
@@ -79,7 +74,7 @@ $app->post('/auth/login', function() use($app) {
     } catch (Exception $e) {
         error('login-invalid', __('Invalid login.'));
     }
-
+    
 
     // $payload = json_decode($app->request()->getBody());
     // // First, check username against LDAP
@@ -116,11 +111,11 @@ $app->post('/auth/login', function() use($app) {
 
    
     // if (!admin){
-    //     $ds=ldap_connect("***REMOVED***");
+    //     $ds=ldap_connect("ldaptc.twpn.root.washpost.com");
     // }
     // try {
     //     if (!admin){
-    //         $r = ldap_bind($ds, "${user}@***REMOVED***", $payload->password);
+    //         $r = ldap_bind($ds, "${user}@TWPN.ROOT.WASHPOST.COM", $payload->password);
     //     }
     //     $user = UserQuery::create()->findOneByEmail($payload->user);
 
