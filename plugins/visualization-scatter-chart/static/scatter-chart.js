@@ -95,7 +95,7 @@
                             .appendTo(el)
                             .css({ position: 'absolute', top: 0, left: 0 });
 
-            _.each(all_series, renderLine);  // _.each(all_series,
+            _.each(all_series, renderPoints);  // _.each(all_series,
 
             if (axesDef.y1.length > 1) {
                 if (legend.pos == 'direct') {
@@ -176,7 +176,7 @@
                 ).attr(theme.frame);
             }
 
-            function renderLine(col, index) {
+            function renderPoints(col, index) {
                 var paths = [],
                     pts_ = [],
                     pts = [],
@@ -220,7 +220,7 @@
                 var strokeColor = lineColor(col);
                 all_paths.push(paths);
 
-                _.each(paths, renderPath);
+               // _.each(paths, renderPath);
 
                 renderMissingValueConnections();
 
@@ -253,7 +253,8 @@
 
                 function renderPoint(x,y){
                     var fillColor = lineColor(col);
-                     vis.registerElement(c.paper.circle(x, y, 10.5).attr({
+                    var rad = pointRadius(col);
+                     vis.registerElement(c.paper.circle(x, y, rad).attr({
                         'stroke': chroma.color(fillColor).darken(14).hex(),
                         'stroke-opacity': 0,
                         'stroke-width': sw,
@@ -573,6 +574,13 @@
             function lineWidth(column) {
                 var fs_scale = $('body').hasClass('fullscreen') ? 1.5 : 1,
                     scale = chart.hasHighlight() ? chart.isHighlighted(column) ? 1 : 0.65 : 1;
+                return theme.lineChart.strokeWidth * fs_scale * scale;
+            }
+
+            //
+            function pointRadius(colum){
+                var fs_scale = $('body').hasClass('fullscreen') ? 2.1 : 1.5,
+                scale = chart.hasHighlight() ? chart.isHighlighted(column) ? 1 : 0.65 : 1;
                 return theme.lineChart.strokeWidth * fs_scale * scale;
             }
 
