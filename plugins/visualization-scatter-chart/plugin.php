@@ -11,7 +11,7 @@ class DatawrapperPlugin_VisualizationScatterChart extends DatawrapperPlugin_Visu
             "order" => 40,
             "axes" => array(
                 "x" => array(
-                    "accepts" => array("text", "date"),
+                    "accepts" => array("number", "date"),
                 ),
                 "y1" => array(
                     "accepts" => array("number"),
@@ -46,23 +46,6 @@ class DatawrapperPlugin_VisualizationScatterChart extends DatawrapperPlugin_Visu
                 "type" => "base-color",
                 "label" => __("Base color")
             ),
-            "sep-labeling" => array(
-                "type" => "separator",
-                "label" => __("Customize labeling"),
-                "depends-on" => array(
-                    "chart.min_columns[y1]" => 2,
-                )
-            ),
-            "direct-labeling" => array(
-                "type" => "checkbox",
-                "label" => __("Direct labeling"),
-                "default" => false,
-                "depends-on" => array(
-                    "chart.min_columns[y1]" => 2,
-                    "chart.max_columns[y2]" => 0  // direct labeling not possible with second axis
-                ),
-                "help" => __("Show the labels right nearby the line ends instead of a separate legend")
-            ),
             "legend-position" => array(
                 "type" => "radio-left",
                 "label" => __("Legend position"),
@@ -90,54 +73,21 @@ class DatawrapperPlugin_VisualizationScatterChart extends DatawrapperPlugin_Visu
                     )
                 )
             ),
-
-            "sep-lines" => array(
+            "sep-marker" => array(
                 "type" => "separator",
-                "label" => __("Customize lines")
+                "label" => __("Customize markers")
             ),
-            "force-banking" => array(
-                "type" => "checkbox",
-                "hidden" => true,
-                "label" => __("Bank the lines to 45 degrees")
+            "sort-by" => array(
+                "type" => "column-select",
+                "label" => __("Sort table by"),
+                "optional" => true,
+                "hidden" => true
             ),
-            "show-grid" => array(
-                "type" => "checkbox",
-                "hidden" => true,
-                "label" => __("Show grid"),
-                "default" => false
-            ),
-            "connect-missing-values" => array(
-                "type" => "checkbox",
-                "label" => __("Connect lines between missing values"),
-            ),
-            "fill-between" => array(
-                "type" => "checkbox",
-                "label" => __("Fill area between lines"),
-                "default" => false,
-                "depends-on" => array(
-                    "chart.min_columns[y1]" => 2,
-                    "chart.max_columns[y1]" => 2,
-                    "chart.max_columns[y2]" => 0  // direct labeling not possible with second axis
-                )
-            ),
-            "fill-below" => array(
-                "type" => "checkbox",
-                "label" => __("Fill area below line"),
-                "defaut" => false,
-                "depends-on" => array(
-                    "chart.max_columns[y1]" => 1,
-                    "chart.max_columns[y2]" => 0
-                )
-            ),
-            "line-mode" => array(
-                "type" => "radio-left",
-                "label" => __("Line interpolation"),
-                "options" => array(
-                    array("label" => __("Straight"), "value" => "straight"),
-                    array("label" => __("Curved"), "value" => "curved"),
-                    array("label" => __("Stepped"), "value" => "stepped")
-                ),
-                "default" => "straight"
+            "marker-radius" => array(
+                "type" => "text",
+                "label" => __("Marker size"),
+                "default" => "5",
+                "suffix" => "px"
             ),
             "sep-y-axis" => array(
                 "type" => "separator",

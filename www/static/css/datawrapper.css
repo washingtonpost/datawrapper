@@ -1682,3 +1682,17 @@ label.separator {
     top: 0;
     width: 100%;
 }
+
+
+/** Styles should be in scatterplot.css, but
+* that file only modifies the chart itself, these
+* are specific to scatterplot options area
+*/
+#vis-options-marker-radius .control-label{
+    width: 14% !important;
+}
+
+#vis-options-marker-radius #marker-radius{
+    width: 20px !important;
+    margin-left: -140px;
+}

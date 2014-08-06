@@ -1,4 +1,6 @@
-
+html #vis-options #vis-options-marker-radius .control-label label{
+    width: 14% !important;
+}
 
 .scatter-chart .label span {
     background-color: #fff;

@@ -225,7 +225,7 @@
 
                 var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
-                var rad = pointRadius(col);
+                var rad = vis.get("marker-radius");
 
                 all_paths.push(paths);
 
@@ -261,6 +261,8 @@
                 }
 
                 function renderMark(mark){
+                    console.log(vis.get('marker-radius'))
+
                      vis.registerElement(c.paper.circle(mark[0], mark[1], rad).attr({
                         'stroke': chroma.color(fillColor).darken(14).hex(),
                         'stroke-opacity': 0,
@@ -942,5 +944,10 @@
         }
 
     });
+    
+    // if (!last_sort && me.get('sort-by', false)) {
+    //     last_sort = [dataset.indexOf(me.get('sort-by')), me.get('sort-asc') ? 'asc' : 'desc'];
+    // }
+
 
 }).call(this);
