@@ -1241,9 +1241,11 @@ form.well form {
 
 .vis-thumb svg path, .vis-thumb svg rect { fill: #bdcce0; }
 .vis-thumb svg line { stroke: #bdcce0; }
+.vis-thumb svg circle { fill: #bdcce0; }
 
 .vis-thumb.active svg path, .vis-thumb.active svg rect { fill: #4482cc; }
 .vis-thumb.active svg line { stroke: #4482cc; }
+.vis-thumb.active svg circle { fill: #4482cc; }
 
 .vis-thumb.active {
     border: 1px solid #1981DD;
