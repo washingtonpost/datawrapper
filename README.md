@@ -2,6 +2,27 @@
 
 Datawrapper is a tool that enables anyone to create enticing visualizations in seconds, without any programming skills. This is the Washington Post's fork, and is very much a work in process on the non-master branches.
 
+##Installation instructions:
+
+(Here are the published instructions)[https://github.com/datawrapper/datawrapper/wiki/Installing-Datawrapper] which have a few errors/omissions (pull request is pending merge w/ origin) so below are our instructions, geared towards using MAMP for php/apache/mySQL (but anything will do).
+
+- Install (MAMP)[http://www.mamp.info/en/]
+- In /Applications/MAMP/htdocs clone this repo
+- In MAMP preferences, point Apache to `datawrapper/www`
+- In MAMP preferences, make sure you're using PHP > 5.2 (5.5.X is stable)
+- Create the configuration file by copying config.yaml.template to config.yaml, edit the file, and change domain and chart_domain and the email addresses, as well as s3 configuration and, if using, ldap settings.
+- Create a new MySQL database called datawrapper. Then, initialize the table schema using `/lib/core/build/sql/schema.sql`. In MAMP, this is straightforward through the phpMyAdmin SQL backend.
+- Copy `lib/core/build/conf/datawrapper-conf.php.master` to `lib/core/build/conf/datawrapper-conf.php` and update your database settings (dbname, user, password) according to your server configuration.
+- Install plugins through `php scripts/plugin.php install pluginname`. The plugins you need are:
+	- admin*
+	- core*
+	- publish-s3
+	- theme-wapo
+	- visualization*
+- Run ./dw.js/make
+- Locally with MAMP, navigate to http://localhost:8888/ and get charting!
+
+
 ## Known bugs
 
 - Some versions of Firefox: Clicking on chart create button redirects to homepage. #6
