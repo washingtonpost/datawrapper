@@ -180,6 +180,7 @@
                 var paths = [],
                     pts_ = [],
                     pts = [],
+                    marks = [],
                     x, y, sw,
                     connectMissingValuePath = [],
                     last_valid_y; // keep the last non-NaN y for direct label position
@@ -190,18 +191,23 @@
 
                 _.each(pts_, function(pts) {
                     //console.log(pts);
+                    // console.log(lineColor(col));
                     paths.push("M" + [pts.shift(), pts.shift()] + (vis.get('line-mode') == 'curved' ? "R" : "L") + pts);
                 });
-
+      
                 for (var i=0; i<pts.length; i+=2 ){
+                // console.log("pts_",pts_);
+                // console.log("pts",pts);
                    // console.log(pts);
                     //console.log(pt, p);
                     // console.log(pts.shift(),pts.shift());
                     // console.log(pts.shift(),pts.shift());
                     // //console.log(pts[0],pts[1]);
                     //console.log(pts.shift(),pts.shift());
-                    renderPoint(pts[i],pts[i+1]);
+                    marks.push([pts[i],pts[i+1]]);
+                    //renderPoint(pts[i],pts[i+1]);
                 }
+
     //                 var circle3 = paper3.circle(13, 13, 10.5);
     // circle3.attr("stroke", "#f1f1f1");
     // circle3.attr("stroke-width", 2);
@@ -217,10 +223,13 @@
                     seriesColIndex++;
                 }
 
+                var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
+                var rad = pointRadius(col);
+
                 all_paths.push(paths);
 
-               // _.each(paths, renderPath);
+               _.each(marks, renderMark);
 
                 renderMissingValueConnections();
 
@@ -251,10 +260,8 @@
                     last_valid_y = y;
                 }
 
-                function renderPoint(x,y){
-                    var fillColor = lineColor(col);
-                    var rad = pointRadius(col);
-                     vis.registerElement(c.paper.circle(x, y, rad).attr({
+                function renderMark(mark){
+                     vis.registerElement(c.paper.circle(mark[0], mark[1], rad).attr({
                         'stroke': chroma.color(fillColor).darken(14).hex(),
                         'stroke-opacity': 0,
                         'stroke-width': sw,
@@ -657,12 +664,15 @@
                     var val = formatter.y1(column.val(row));
                     lbl.data('key', column.name());
                     lbl.data('row', 0);
-                    lbl.text(val);
+                    lbl.text(column.name() + ": " + String(val));
+
+                    console.log(column.name());
+
 
                     lbl.attr({
                         x: lx,
                         y: scales.y(column.val(row))-21,
-                        w: vis.labelWidth(val)+10
+                        w: vis.labelWidth(column.name() + ": " + String(val))+10
                     });
                     // if the current value is NaN we cannot show it
                     if (isNaN(column.val(row))) {
