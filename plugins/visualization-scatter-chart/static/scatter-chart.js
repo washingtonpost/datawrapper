@@ -66,6 +66,7 @@
             var all_series = axesDef.y1,
                 seriesLines = this.__seriesLines = {};
 
+
             if (legend.pos != 'direct') {
                 // sort lines by last data point
                 all_series = all_series.sort(function(a, b) {
@@ -189,28 +190,11 @@
                 // store the last line
                 if (pts.length > 0) pts_.push(pts);
 
-                _.each(pts_, function(pts) {
-                    //console.log(pts);
-                    // console.log(lineColor(col));
-                    paths.push("M" + [pts.shift(), pts.shift()] + (vis.get('line-mode') == 'curved' ? "R" : "L") + pts);
-                });
-      
+              
                 for (var i=0; i<pts.length; i+=2 ){
-                // console.log("pts_",pts_);
-                // console.log("pts",pts);
-                   // console.log(pts);
-                    //console.log(pt, p);
-                    // console.log(pts.shift(),pts.shift());
-                    // console.log(pts.shift(),pts.shift());
-                    // //console.log(pts[0],pts[1]);
-                    //console.log(pts.shift(),pts.shift());
                     marks.push([pts[i],pts[i+1]]);
-                    //renderPoint(pts[i],pts[i+1]);
                 }
 
-    //                 var circle3 = paper3.circle(13, 13, 10.5);
-    // circle3.attr("stroke", "#f1f1f1");
-    // circle3.attr("stroke-width", 2);
 
                 sw = lineWidth(col);
                 var palette = theme.colors.palette.slice();
@@ -253,6 +237,7 @@
                         var lp = pts_[pts_.length-1], s = lp.length-2;
                         connectMissingValuePath.push('M'+[lp[s], lp[s+1]]+'L'+[ x, y]);
                     }
+                    console.log(pts_[pts_.length-1])
                     if (vis.get('line-mode') == 'stepped' && last_valid_y !== undefined) {
                         pts.push(x, last_valid_y);
                     }
@@ -261,8 +246,6 @@
                 }
 
                 function renderMark(mark){
-                    console.log(vis.get('marker-radius'))
-
                      vis.registerElement(c.paper.circle(mark[0], mark[1], rad).attr({
                         'stroke': chroma.color(fillColor).darken(14).hex(),
                         'stroke-opacity': 0,
@@ -667,8 +650,6 @@
                     lbl.data('key', column.name());
                     lbl.data('row', 0);
                     lbl.text(column.name() + ": " + String(val));
-
-                    console.log(column.name());
 
 
                     lbl.attr({
