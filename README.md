@@ -6,7 +6,7 @@ Datawrapper is a tool that enables anyone to create enticing visualizations in s
 
 (Here are the published instructions)[https://github.com/datawrapper/datawrapper/wiki/Installing-Datawrapper] which have a few errors/omissions (pull request is pending merge w/ origin) so below are our instructions, geared towards using MAMP for php/apache/mySQL (but anything will do).
 
-- Install (MAMP)[http://www.mamp.info/en/]
+- Install [MAMP](http://www.mamp.info/en/)
 - In /Applications/MAMP/htdocs clone this repo
 - In MAMP preferences, point Apache to `datawrapper/www`
 - In MAMP preferences, make sure you're using PHP > 5.2 (5.5.X is stable)
