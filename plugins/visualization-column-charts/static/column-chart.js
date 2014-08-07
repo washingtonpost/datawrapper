@@ -415,7 +415,7 @@
                     // var lbl = tickLabels[key] = tickLabels[key] ||
                     //     me.label(x+2, ly, formatter(val, t == ticks.length-1, true),
                     //         { align: 'left', cl: 'axis', css: { opacity: 0 } });
-                    lbl = me.__gridlabels[val] = me.__gridlabels[val] || me.label(x+2, ly, txt, { align: 'left', cl: 'axis', css: { opacity: 0 } });
+                    lbl = me.__tickLabels[val] = me.__tickLabels[val] || me.label(x+2, ly, txt, { align: 'left', cl: 'axis', css: { opacity: 0 } });
                     //lbl.animate({ x: x+2, y: ly, css: { opacity: 1 } }, me.theme().duration, me.theme().easing);
                     lbl.animate({ x: x+2, y: ly, css: { opacity: 1 } }, theme.duration, theme.easing);
                 }

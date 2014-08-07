@@ -268,12 +268,12 @@
                 * To fix label rounding, set 3rd parameter to `false`
                 * In dw.js/src/dw.chart.js the function exists:
                 * `formatValue: function(val, full, round)`
-                * which is what is being called above. NOT this files
+                * which is what is being called below. NOT this files
                 * formatValue, which calls `columnFormatter(column)`
                 * in /dw.js/dw-2.0.js, and is the columnformatter used
                 * to format bar values
                 */
-                    txt = me.formatValue(val, t == ticks.length-1, false);
+                txt = me.formatValue(val, t == ticks.length-1, false);
 
                 // c.paper.text(x, y, val).attr(styles.labels).attr({ 'text-anchor': 'end' });
                 if (me.theme().columnChart.cutGridLines) ly += 10;
@@ -377,8 +377,6 @@
             // we're overwriting this function with the actual column formatter
             // when it is first called (lazy evaluation)
             me.formatValue = me.chart().columnFormatter(me.axes(true).columns[0]);
-            console.log(me.axes(true).columns[0]);
-            console.log(me.chart().columnFormatter);
             return me.formatValue.apply(me, arguments);
         },
 
