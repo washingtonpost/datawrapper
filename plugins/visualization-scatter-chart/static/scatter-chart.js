@@ -210,6 +210,7 @@
                 var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
                 var rad = vis.get("marker-radius");
+                var markerType = "cross";
 
                 all_paths.push(paths);
 
@@ -246,12 +247,41 @@
                 }
 
                 function renderMark(mark){
-                     vis.registerElement(c.paper.circle(mark[0], mark[1], rad).attr({
+                    var marker;
+                    var strokeOpacity = 0;
+                    var strokeWidth = 0;
+                    var cx = mark[0];
+                    var cy = mark[1];
+                    if (markerType === "circle"){
+                        marker = vis.registerElement(c.paper.circle(cx, cy, rad));
+                    }
+                    else if (markerType === "square"){
+                        //a is 1/2 of side length of square (r is hypotenuse of right isoceles triangle)
+                        var a = rad/Math.sqrt(2);
+                        marker = vis.registerElement(c.paper.path('M'+[cx-a,cy+a]+'L'+[cx+a,cy+a]+'L'+[cx+a,cy-a]+'L'+[cx-a,cy-a]+'Z'));
+                    }
+                    else if (markerType === "triangle"){
+                        //pt A directly above center, B and C determined by 30,60,90 triangles
+                        //w r as hypotenuse
+                        var a = rad/2.0;
+                        var b = a*Math.sqrt(3);
+
+                        console.log(a,b)
+                        marker = vis.registerElement(c.paper.path('M'+[cx,cy-rad]+'L'+[cx+b,cy+a]+'L'+[cx-b,cy+a]+'Z'));
+                    }
+                    else if (markerType === "cross"){
+                        //works w/ hard coded rad (set rad = 5, eg)
+                        var a = rad;
+                        var b = 0.12*rad;
+                        marker = vis.registerElement(c.paper.path('M'+[cx-a,cy+b]+'L'+[cx-a,cy-b]+'L'+[cx-b,cy-b]+'L'+[cx-b,cy-a]+'L'+[cx+b,cy-a]+'L'+[cx+b,cy-b]+'L'+[cx+a,cy-b]+'L'+[cx+a,cy+b]+'L'+[cx+b,cy+b]+'L'+[cx+b,cy+a]+'L'+[cx-b,cy+a]+'L'+[cx-b,cy+b]+'Z'));
+                        
+                    }
+                    marker.attr({
                         'stroke': chroma.color(fillColor).darken(14).hex(),
-                        'stroke-opacity': 0,
-                        'stroke-width': sw,
+                        'stroke-opacity': strokeOpacity,
+                        'stroke-width': strokeWidth,
                         'fill': fillColor 
-                     }), col.name());
+                     });
                 }
 
                 function renderPath(path) {
