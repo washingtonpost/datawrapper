@@ -1,5 +1,5 @@
 {
-    "name": "visualization-data-table",
+    "name": "visualization-data-table-wapo",
     "version": "1.7.1",
     "author": "Gregor Aisch & Edouard Richard",
     "dependencies": {
