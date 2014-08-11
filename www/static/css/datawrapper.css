@@ -1691,10 +1691,16 @@ label.separator {
 * are specific to scatterplot options area
 */
 #vis-options-marker-radius .control-label{
-    width: 14% !important;
+    width: 40% !important;
+    float: left;
+}
+
+#vis-options-marker-radius #marker-radius div.controls{
+    float:right;
+    margin-left: 20px !important;
 }
 
 #vis-options-marker-radius #marker-radius{
     width: 20px !important;
-    margin-left: -140px;
+    /*margin-left: -140px;*/
 }

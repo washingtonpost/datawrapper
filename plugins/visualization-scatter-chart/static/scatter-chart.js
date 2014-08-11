@@ -209,7 +209,7 @@
 
                 var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
-                var rad = vis.get("marker-radius");
+                var rad = parseFloat(vis.get("marker-radius"));
                 var markerType = "cross";
 
                 all_paths.push(paths);
@@ -238,7 +238,6 @@
                         var lp = pts_[pts_.length-1], s = lp.length-2;
                         connectMissingValuePath.push('M'+[lp[s], lp[s+1]]+'L'+[ x, y]);
                     }
-                    console.log(pts_[pts_.length-1])
                     if (vis.get('line-mode') == 'stepped' && last_valid_y !== undefined) {
                         pts.push(x, last_valid_y);
                     }
@@ -270,9 +269,9 @@
                         marker = vis.registerElement(c.paper.path('M'+[cx,cy-rad]+'L'+[cx+b,cy+a]+'L'+[cx-b,cy+a]+'Z'));
                     }
                     else if (markerType === "cross"){
-                        //works w/ hard coded rad (set rad = 5, eg)
                         var a = rad;
-                        var b = 0.12*rad;
+                        var b = 0.22*rad;
+
                         marker = vis.registerElement(c.paper.path('M'+[cx-a,cy+b]+'L'+[cx-a,cy-b]+'L'+[cx-b,cy-b]+'L'+[cx-b,cy-a]+'L'+[cx+b,cy-a]+'L'+[cx+b,cy-b]+'L'+[cx+a,cy-b]+'L'+[cx+a,cy+b]+'L'+[cx+b,cy+b]+'L'+[cx+b,cy+a]+'L'+[cx-b,cy+a]+'L'+[cx-b,cy+b]+'Z'));
                         
                     }
