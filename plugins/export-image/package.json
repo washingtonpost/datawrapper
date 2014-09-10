@@ -1,5 +1,8 @@
 {
     "name": "export-image",
     "version": "1.0.0",
-    "description": "This plugin allows users to export their charts as static images (PNG, PDF)."
+    "description": "This plugin allows users to export their charts as static images (PNG, PDF).",
+    "dependencies": {
+        "phantomjs": "1.0.0"
+    }
 }
