@@ -420,6 +420,7 @@
         },
 
         _getColor: function(series, row, opts) {
+            console.log("asdf")
             var me = this,
                 key = opts.key;
 
@@ -463,7 +464,7 @@
             // otherwise just return the base color
             return baseColor;
         },
-
+//This function seems to be only called by grouped-colum-chart?
         getColor: function(series, row, opts) {
             var me = this,
                 chart = me.chart(),

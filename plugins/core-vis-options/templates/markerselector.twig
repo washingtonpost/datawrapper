@@ -1,0 +1,71 @@
+
+{% if option.type == 'base-marker' %}
+
+    <div id="{{ key }}">
+        {% if not option.hideBaseMarkerPicker %}
+            <div class="control-group">
+                <label class="control-label" for="select-marker">{{ option.label }}</label>
+                <div class="controls">
+                    <div class="base-marker-picker marker-picker">
+                        <div class="arrow"></div>
+                    </div>
+                    {% if not option.hideCustomMarkerSelector %}
+                    <span class="custom-marker-selector-head">
+                        <a href="#" class="btn btn-small custom" role="button">{% trans "customize markers..." %}</a>
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+
+            {% if not option.hideCustomMarkerSelector %}
+            <div class="control-group custom-marker-selector-head">
+                <label class="control-label"></label>
+                <div class="controls">
+                    <a class="btn btn-small custom" role="button">{% trans "Customize markers..." %}</a>
+                </div>
+            </div>
+            {% endif %}
+
+        {% endif %}
+
+        {% if not option.hideCustomMarkerSelector %}
+
+            <div class="custom-marker-selector-body" style="display:none">
+
+                <div class="row">
+                    <div class="span2" style="width:43%">
+                        <h4>{% trans "Select element(s):" %}</h4>
+                        <ul class="dataseries unstyled">
+                        </ul>
+                        <div style="font-size:12px;text-align:center;margin-bottom:10px;">
+                            {% trans "Select:" %} &nbsp;
+                            <a class="select-all" >{% trans "all" %}</a> &nbsp;
+                            <a class="select-none" onclick="$('.dataseries li').removeClass('selected')">{% trans "none" %}</a> &nbsp;
+                            <a class="select-invert" onclick="$('.dataseries li').toggleClass('selected')">{% trans "invert" %}</a>
+                        </div>
+
+                    </div>
+                    <div class="span2" style="width:42%;">
+                        <h4>{% trans "Choose a marker:" %}</h4>
+                        <div class="info">
+                            {% trans "Please select an element on the left to change markers for individual elements..." %}
+                        </div>
+                        <div class="select" style="display:none">
+                             <div class="marker-picker">
+                                <div class="arrow"></div>
+                             </div>
+                            <button class="btn reset-marker">{% trans "Reset" %}</button>
+                        </div>
+                         <button style="margin-top:20px" class="btn reset-all-markers">{% trans "Reset all markers" %}</button>
+                    </div>
+                </div>
+                <hr />
+            </div>
+
+
+        {% endif %}
+    </div>
+
+
+{% endif %}

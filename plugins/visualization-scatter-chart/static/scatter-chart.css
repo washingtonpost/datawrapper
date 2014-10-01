@@ -1,0 +1,59 @@
+html #vis-options #vis-options-marker-radius .control-label label{
+    width: 14% !important;
+}
+
+.scatter-chart .label span {
+    background-color: #fff;
+}
+
+html .scatter-chart  .label.tooltip span {
+    background: none;
+}
+
+.scatter-chart .label.highlighted {
+    z-index: 100;
+}
+
+.scatter-chart .label.highlighted span,
+.scatter-chart .label.axis span {
+    background-color: #fff;
+}
+
+.scatter-chart .label.rotate45 {
+    -moz-transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+}
+
+.scatter-chart .label.x-axis {
+    font-weight: bold;
+}
+
+.scatter-chart .label.x-axis.h span {
+    padding: 2px 5px 5px;
+}
+
+html, body {
+    overflow: hidden!important;
+}
+
+.scatter-chart .tooltip {
+    padding: 2px 0px;
+    text-align: center;
+    z-index: 100;
+}
+
+.scatter-chart .tooltip:after {
+    content: "⎮";
+    position: absolute;
+    bottom: -10px;
+    left: 20%;
+    right: 20%;
+    color: rgba(0,0,0,.8);
+    font-size: 10px;
+    scatter-height: 10px;
+    font-family: Arial;
+    z-index: -1;
+    text-align: center;
+}

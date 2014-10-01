@@ -11,6 +11,7 @@ define([
     './backend/snapshot',
     './backend/checkPassword',
     './backend/ui/ColorSelector',
+    './backend/ui/MarkerSelector',
     './backend/ui/NumberStepper',
     './backend/popupChart',
     './backend/resendActivationMail',
@@ -18,7 +19,7 @@ define([
     ],
 
 function(syncChart, initializeSignUp, initLanguageLinks, initializeLogout,
-    snapshot, checkPassword, ColorSelector, NumberStepper, popupChart,
+    snapshot, checkPassword, ColorSelector, MarkerSelector, NumberStepper, popupChart,
     resendActivationMail, notification) {
 
     var backend = {};
@@ -31,6 +32,7 @@ function(syncChart, initializeSignUp, initLanguageLinks, initializeLogout,
             initializeLogout();
             // init custom jquery ui
             ColorSelector();
+            MarkerSelector();
             NumberStepper();
 
             $('a[data-toggle=modal]').click(function(e) {

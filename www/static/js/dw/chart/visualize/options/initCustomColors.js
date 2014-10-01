@@ -82,6 +82,7 @@ define(function() {
 
         // called whenever the user selects a new series
         function customColorSelectSeries() {
+            console.log("colorfoo");
             var li = $('#customColors .dataseries li.selected');
             var palette = $('#palette-colors').data('colors').split(',');
             if (palette.indexOf(li.data('color')) < 0) $('#user-color').val(li.data('color'));
@@ -126,6 +127,7 @@ define(function() {
         }
 
         function resetAllColors(e) {
+            console.log("test")
             $('#customColors .dataseries li .color').html('×').css('background', '');
             $('#customColors .dataseries li').data('color', '');
             chart.set('metadata.visualize.custom-colors', {});

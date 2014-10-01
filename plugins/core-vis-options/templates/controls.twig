@@ -42,8 +42,10 @@
 
     <label class="control-label"  for="{{ key }}">{{ option.label|raw }}</label>
     <div class="controls form-inline">
-        <input type="text" style="width:auto" id="{{ key }}" value="" />
+        <input type="text" style="width:auto" id="{{ key }}" value={{option.default|raw}} />
+    <label class="suffix" for="{{ key }}">{{ option.suffix|raw }}</label>
     </div>
+
 
 {% elseif option.type == 'textarea' %}
 

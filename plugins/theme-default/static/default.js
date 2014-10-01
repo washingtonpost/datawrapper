@@ -18,6 +18,8 @@
             background: '#ffffff'
         },
 
+        markers: ["circle","square","triangle","cross"],
+
         lineChart: {
             fillOpacity: 0.2
         },
