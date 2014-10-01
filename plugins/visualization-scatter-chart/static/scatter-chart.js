@@ -210,7 +210,19 @@
                 var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
                 var rad = parseFloat(vis.get("marker-radius"));
-                var markerType = "cross";
+                // console.log("foo",col.name());
+                var customMarkers = vis.get('custom-markers', {});
+                var baseMarker = theme.markers[Math.max(0, vis.get('base-marker', 0))]
+                // user has defined a colors for this key
+                var markerType;
+                if (customMarkers[col.name()]) {
+                    markerType = customMarkers[col.name()];
+
+                }
+                else{
+                    markerType = baseMarker;
+                }
+
 
                 all_paths.push(paths);
 
@@ -599,7 +611,7 @@
             }
 
             //
-            function pointRadius(colum){
+            function pointRadius(column){
                 var fs_scale = $('body').hasClass('fullscreen') ? 2.1 : 1.5,
                 scale = chart.hasHighlight() ? chart.isHighlighted(column) ? 1 : 0.65 : 1;
                 return theme.lineChart.strokeWidth * fs_scale * scale;

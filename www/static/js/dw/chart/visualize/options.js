@@ -1,8 +1,8 @@
 
 define(
-    ['./options/initCustomColors', './options/syncVisOptions', './options/unsyncVisOptions'],
+    ['./options/initCustomColors','./options/initCustomMarkers', './options/syncVisOptions', './options/unsyncVisOptions'],
 
-function(initCustomColors, syncVisOptions, unsyncVisOptions) {
+function(initCustomColors, initCustomMarkers, syncVisOptions, unsyncVisOptions) {
 
     var _chart, _vis;
 
@@ -16,6 +16,7 @@ function(initCustomColors, syncVisOptions, unsyncVisOptions) {
             syncVisOptions(_vis, _chart);
             $('.select-row').hide();
             initCustomColors(_chart);
+            initCustomMarkers(_chart);
 
             $('.vis-option-help').tooltip({
                 placement: 'left',

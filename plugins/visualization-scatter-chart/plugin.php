@@ -46,6 +46,10 @@ class DatawrapperPlugin_VisualizationScatterChart extends DatawrapperPlugin_Visu
                 "type" => "base-color",
                 "label" => __("Base color")
             ),
+            "base-marker" => array(
+                "type" => "base-marker",
+                "label" => __("Base marker")
+            ),
             "legend-position" => array(
                 "type" => "radio-left",
                 "label" => __("Legend position"),

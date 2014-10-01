@@ -1541,6 +1541,9 @@ label.separator {
     margin-bottom: 0;
 }
 
+
+/* Color selector pop up*/
+
 .color-selector {
     position: absolute;
     background: #fff;
@@ -1646,6 +1649,115 @@ label.separator {
 .color-selector .footer .color.selected {
     border: 0;
 }
+
+
+/* Marker Selector popup*/
+.marker-selector {
+    position: absolute;
+    background: #fff;
+    z-index: 9999;
+    width: 157px;
+    padding: 10px;
+    padding-right: 8px;
+    border-radius: 3px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.35),0 0 25px rgba(0,0,0,0.35),5px 5px 3px rgba(0,0,0,0.15);
+}
+
+.marker-selector .palette {
+    line-height: 5px;
+    margin-bottom: 10px;
+}
+
+.marker-selector .palette .marker {
+    display: inline-block;
+    width: 24px;
+    height: 23px;
+    margin: 0 2px 2px 0;
+    border-radius: 1px;
+}
+
+.marker-selector .marker {
+    cursor: pointer;
+}
+
+.marker-selector .marker.selected {
+    border: 2px solid #000;
+}
+
+.marker-selector .marker.selected.inverted {
+    border-color:#ddd;
+}
+
+.marker-selector .palette .marker.selected {
+    width: 20px;
+    height: 19px;
+}
+
+.marker-selector .marker-axis {
+    height: 22px;
+    margin-bottom: 2px;
+}
+
+.marker-selector .marker-axis .marker {
+    width: 11px;
+    height: 22px;
+    display: inline-block;
+}
+
+.marker-selector .marker-axis .marker.selected {
+    width: 7px;
+    height: 18px;
+}
+
+.marker-selector .marker-axis.hue .marker {
+    width: 11px;
+}
+
+.marker-selector .marker-axis.hue .marker:last-child {
+    margin-right: 0;
+    width: 11px;
+}
+
+.marker-selector .marker-axis.hue .marker.selected {
+    width: 7px;
+}
+
+.marker-selector .hex {
+    border-radius: 0;
+    font-size: 12px;
+    width: 60px;
+    padding: 2px 4px;
+    text-transform: lowercase;
+    position: absolute;
+    left: 25px;
+    bottom: 0px;
+    margin: 0;
+    text-align: center;
+}
+
+.marker-selector .btn.ok {
+    position: absolute;
+    bottom: 0px;
+    right: 3px;
+}
+
+.marker-selector .footer {
+    height: 40px;
+    position: relative;
+}
+
+.marker-selector .footer .marker {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 25px;
+    height: 26px;
+}
+
+.marker-selector .footer .marker.selected {
+    border: 0;
+}
+/*****/
 
 
 .dw-create-visualize .control-group .pull-left {
