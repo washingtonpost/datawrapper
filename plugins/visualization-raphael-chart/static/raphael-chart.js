@@ -420,7 +420,6 @@
         },
 
         _getColor: function(series, row, opts) {
-            console.log("asdf")
             var me = this,
                 key = opts.key;
 
