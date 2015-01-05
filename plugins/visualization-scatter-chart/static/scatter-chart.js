@@ -210,7 +210,6 @@
                 var fillColor = lineColor(col);
                 var strokeColor = lineColor(col);
                 var rad = parseFloat(vis.get("marker-radius"));
-                // console.log("foo",col.name());
                 var customMarkers = vis.get('custom-markers', {});
                 var baseMarker = theme.markers[Math.max(0, vis.get('base-marker', 0))]
                 // user has defined a colors for this key
@@ -277,7 +276,6 @@
                         var a = rad/2.0;
                         var b = a*Math.sqrt(3);
 
-                        console.log(a,b)
                         marker = vis.registerElement(c.paper.path('M'+[cx,cy-rad]+'L'+[cx+b,cy+a]+'L'+[cx-b,cy+a]+'Z'));
                     }
                     else if (markerType === "cross"){
@@ -966,10 +964,6 @@
         }
 
     });
-    
-    // if (!last_sort && me.get('sort-by', false)) {
-    //     last_sort = [dataset.indexOf(me.get('sort-by')), me.get('sort-asc') ? 'asc' : 'desc'];
-    // }
 
 
 }).call(this);

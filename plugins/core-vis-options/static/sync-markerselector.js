@@ -27,12 +27,9 @@ $(function() {
              * initializes the base marker dropdown
              */
             function initBaseMarkerPicker() {
-                // console.log(chart.get('metadata.visualize.base-marker', 0));
-                // console.log(theme);
                 var curMarker = chart.get('metadata.visualize.base-marker', 0);
                 if (!_.isString(curMarker)) curMarker = theme.markers[curMarker];
                 // update base marker picker
-                // console.log($picker.markerselector())
                 $picker
                     .css('background', curMarker)
                     .click(function() {
@@ -140,7 +137,6 @@ $(function() {
                     var li = $('li.selected', $labelUl),
                         $markPicker = $('.marker-picker', $body),
                         $reset = $('.reset-marker', $body);
-                    console.log(li.data('marker'),theme.markers);
 
                     if (li.length > 0) {
                         $('.info', $body).hide();
@@ -163,9 +159,7 @@ $(function() {
 
                     // set a new marker and save
                     function update(marker) {
-                        console.log(chart.get('metadata'))
                         var sel = $.extend({}, chart.get('metadata.visualize.custom-markers', {}));
-                        // console.log(sel);
                         $('.marker', li)
                             .css('background', marker)
                             .html('');
