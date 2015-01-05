@@ -146,6 +146,7 @@ class DatawrapperPlugin_VisualizationLineChart extends DatawrapperPlugin_Visuali
             "baseline-zero" => array(
                 "type" => "checkbox",
                 "label" => __("Extend to zero"),
+                "default" => true,
             ),
             "extend-range" => array(
                 "type" => "checkbox",
