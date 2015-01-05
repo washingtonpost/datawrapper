@@ -4,7 +4,7 @@ define(function() {
     var chart = dw.backend.currentChart;
 
     function init(chartUrl, publish, republish) {
-        chart.sync('#embed-width', 'metadata.publish.embed-width');
+        // Only sync height, width should always be 100%
         chart.sync('#embed-height', 'metadata.publish.embed-height');
 
         $('#embed-width, #embed-height').change(function() {

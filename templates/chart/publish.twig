@@ -35,10 +35,10 @@ dw.backend.ready(function() {
             <p class="lead">{% trans "Embed into your website" %}</p>
             <p>{% trans "Just copy &amp; paste the following code into your website." %}</p>
             <form class="form-inline">
-                <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:4ex" value="600" /> px</label>&nbsp;&nbsp;
+                <label>{% trans "Width" %}: <input type="text" id="embed-width" class="input-small" style="width:4ex" value="100%" disabled="disabled" /></label>&nbsp;&nbsp;
                 <label>{% trans "Height" %}: <input type="text" id="embed-height" class="input-small" style="width:4ex" value="400" /> px</label>
 
-            <textarea style="font-size: 13px;padding:5px" id="iframe-code" class="well span4" rows="5"><iframe src="{{ chartUrl }}" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="{{ chart.metadata.publish['embed-width'] }}" height="{{ chart.metadata.publish['embed-height'] }}" data-preserve-height="true"></iframe></textarea>
+            <textarea style="font-size: 13px;padding:5px" id="iframe-code" class="well span4" rows="5"><iframe src="{{ chartUrl }}" frameborder="0" allowtransparency="true" allowfullscreen="allowfullscreen" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" oallowfullscreen="oallowfullscreen" msallowfullscreen="msallowfullscreen" width="100%" height="{{ chart.metadata.publish['embed-height'] }}" data-preserve-height="true"></iframe></textarea>
 
 
             <p class="lead">{%trans "Other things to do" %}</p>
